@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ReadingList.Core\ReadingList.Core.csproj" />
+    <ProjectReference Include="..\ReadingList.DataBase\ReadingList.DataBase.csproj" />
+  </ItemGroup>
+
 </Project>
