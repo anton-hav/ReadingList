@@ -5,5 +5,10 @@ namespace ReadingList.Data.Abstractions;
 
 public interface IUnitOfWork
 {
+    IRepository<Author> Authors { get; }
+    IRepository<Category> Categories { get; }
+    IRepository<Book> Books { get; }
+    IRepository<BookNote> BookNotes { get; }
+
     Task<int> Commit();
 }
