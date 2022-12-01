@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>C:\Users\user\source\repos\ReadingList\ReadingList\doc.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,6 +35,7 @@
 
   <ItemGroup>
     <Folder Include="MappingProfiles\" />
+    <Folder Include="Models\Requests\" />
   </ItemGroup>
 
 </Project>

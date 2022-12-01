@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ReadingList.WebAPI</name>
+    </assembly>
+    <members>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.GetCategoryById(System.Guid)">
+            <summary>
+            Get a category from storage with specified id.
+            </summary>
+            <param name="id">a category unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns>A category with specified Id</returns>
+            <response code="200">Returns a category corresponding to the specified identifier.</response>
+            <response code="404">Failed to find record in the database that match the specified id.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.AddCategory(ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
+            <summary>
+            Add a new category to storage.
+            </summary>
+            <param name="model">a category</param>
+            <returns>A newly created category</returns>
+            <response code="201">Returns the newly created category</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">The same entry already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.UpdateCategory(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
+            <summary>
+            Update or replace a category with specified Id in storage.
+            </summary>
+            <param name="id">a category unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a category used for update</param>
+            <returns>A category with specified Id.</returns>
+            <response code="200">Returns the updated category</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.PatchCategory(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
+            <summary>
+            Patch a category with specified Id in storage.
+            </summary>
+            <param name="id">a category unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a category used for patching</param>
+            <returns>A category with specified Id.</returns>
+            <response code="200">Returns the updated category</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.DeleteCategory(System.Guid)">
+            <summary>
+            Delete a category with specified Id from the storage.
+            </summary>
+            <param name="id">a category unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns></returns>
+            <response code="204">Successful deletion</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.CheckCategoryForEditAsync(System.Guid,System.String)">
+            <summary>
+            Validate a category model for update.
+            </summary>
+            <param name="id">a unique identifier that defines the category to be updated </param>
+            <param name="categoryName">a category name</param>
+            <returns>A boolean</returns>
+            <exception cref="T:System.ArgumentNullException">If the id is empty.</exception>
+            <exception cref="T:System.ArgumentException">If the same entry already exists in the storage.</exception>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel">
+            <summary>
+            Request model to create or update category
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel.Name">
+            <summary>
+            Category name
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Responses.ErrorModel">
+            <summary>
+            Model for returning errors from api
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.ErrorModel.Message">
+            <summary>
+            Error message
+            </summary>
+        </member>
+        <member name="M:ReadingList.WebAPI.Program.GetPathToLogFile">
+            <summary>
+                Returns the path for log file recording.
+            </summary>
+            <returns>A string whose value contains a path to the log file</returns>
+        </member>
+    </members>
+</doc>

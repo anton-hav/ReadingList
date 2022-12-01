@@ -1,13 +1,17 @@
 using System.Reflection;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
+using ReadingList.Business.ServiceImplementations;
+using ReadingList.Core.Abstractions;
 using ReadingList.Data.Abstractions;
+using ReadingList.Data.Abstractions.Repositories;
 using ReadingList.Data.Repositories;
 using ReadingList.DataBase;
+using ReadingList.DataBase.Entities;
 using Serilog;
 using Serilog.Events;
 
-namespace ReadingList
+namespace ReadingList.WebAPI
 {
     public class Program
     {
@@ -26,13 +30,22 @@ namespace ReadingList
                 optionBuilder => optionBuilder.UseSqlServer(connectionString));
 
             builder.Services.AddControllers();
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.IncludeXmlComments(builder.Configuration["APIXmlDocumentation"]);
+            });
 
             // Add business services
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             // Add repositories
+            builder.Services.AddScoped<IRepository<Author>, Repository<Author>>();
+            builder.Services.AddScoped<IRepository<Category>, Repository<Category>>();
+            builder.Services.AddScoped<IRepository<Book>, Repository<Book>>();
+            builder.Services.AddScoped<IRepository<BookNote>, Repository<BookNote>>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
