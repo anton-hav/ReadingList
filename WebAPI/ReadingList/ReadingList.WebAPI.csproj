@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\user\source\repos\ReadingList\ReadingList\doc.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\user\source\repos\WebAPI\ReadingList\ReadingList\doc.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
