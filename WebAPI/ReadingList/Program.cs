@@ -25,6 +25,19 @@ namespace ReadingList.WebAPI
                     LogEventLevel.Information));
 
             // Add services to the container.
+
+            var myCorsPolicyName = "ReactApp";
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy(myCorsPolicyName, policyBuilder =>
+                {
+                    policyBuilder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin();
+                });
+            });
+
             var connectionString = builder.Configuration.GetConnectionString("Default");
             builder.Services.AddDbContext<ReadingListDbContext>(
                 optionBuilder => optionBuilder.UseSqlServer(connectionString));
@@ -59,7 +72,7 @@ namespace ReadingList.WebAPI
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors(myCorsPolicyName);
             app.UseAuthorization();
 
 
