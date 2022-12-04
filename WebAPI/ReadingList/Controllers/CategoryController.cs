@@ -14,12 +14,12 @@ namespace ReadingList.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly ICategoryService _categoryService;
         
-        public CategoryController(ICategoryService categoryService, 
+        public CategoriesController(ICategoryService categoryService, 
             IMapper mapper)
         {
             _categoryService = categoryService;
@@ -54,6 +54,31 @@ namespace ReadingList.WebAPI.Controllers
                 Log.Error($"{ex.Message}. {Environment.NewLine} {ex.StackTrace}");
                 return StatusCode(500, new ErrorModel { Message = "Unexpected error on the server side." });
             }
+        }
+
+        /// <summary>
+        /// Get categories from storage.
+        /// </summary>
+        /// <returns>all categories</returns>
+        /// <response code="200">Returns all categories.</response>
+        /// <response code="500">Unexpected error on the server side.</response>
+        [HttpGet]
+        [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> GetCategories()
+        {
+            try
+            {
+                var categories = await _categoryService.GetCategoriesAsync();
+
+                return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"{ex.Message}. {Environment.NewLine} {ex.StackTrace}");
+                return StatusCode(500, new ErrorModel { Message = "Unexpected error on the server side." });
+            }
+            
         }
 
         /// <summary>

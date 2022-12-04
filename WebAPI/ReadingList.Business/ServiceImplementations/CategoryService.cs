@@ -32,6 +32,16 @@ public class CategoryService : ICategoryService
     }
 
     /// <inheritdoc />
+    public async Task<List<CategoryDto>> GetCategoriesAsync()
+    {
+        var categories = await _unitOfWork.Categories
+            .Get()
+            .ToListAsync();
+
+        return _mapper.Map<List<CategoryDto>>(categories);
+    }
+
+    /// <inheritdoc />
     public async Task<bool> IsCategoryExistByNameAsync(string name)
     {
         var entity = await _unitOfWork.Categories

@@ -13,7 +13,12 @@ public interface ICategoryService
     /// <returns><see cref="CategoryDto"/></returns>
     Task<CategoryDto> GetByIdAsync(Guid id);
 
-
+    /// <summary>
+    /// Get categories from storage
+    /// </summary>
+    /// <returns>all categories</returns>
+    Task<List<CategoryDto>> GetCategoriesAsync();
+    
     /// <summary>
     /// Checks if the record with the same name exists in the storage.
     /// </summary>
