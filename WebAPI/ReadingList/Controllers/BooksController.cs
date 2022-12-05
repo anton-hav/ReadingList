@@ -55,7 +55,7 @@ namespace ReadingList.WebAPI.Controllers
                 return StatusCode(500, new ErrorModel { Message = "Unexpected error on the server side." });
             }
         }
-
+        
         /// <summary>
         /// Get books from storage.
         /// </summary>
@@ -63,14 +63,22 @@ namespace ReadingList.WebAPI.Controllers
         /// <response code="200">Returns all books.</response>
         /// <response code="500">Unexpected error on the server side.</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<GetBookResponseModel>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<GetBookResponseModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetBooks()
+        public async Task<IActionResult> GetBooks([FromQuery] GetBooksRequestModel model)
         {
             try
             {
-                var books = await _bookService.GetBooksAsync();
-                var response = _mapper.Map<List<GetBookResponseModel>>(books);
+                if (model.PageSize == 0)
+                    model.PageSize = 10;
+
+                var books = await _bookService
+                    .GetBooksBySearchParametersAsync(model.Title, 
+                        model.AuthorId, 
+                        model.CategoryId, 
+                        model.PageNumber, 
+                        model.PageSize);
+                var response = _mapper.Map<IEnumerable<GetBookResponseModel>>(books);
 
                 return Ok(response);
             }

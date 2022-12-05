@@ -20,6 +20,21 @@ public interface IBookService
     Task<List<BookDto>> GetBooksAsync();
 
     /// <summary>
+    /// Get books from storage by search parameters
+    /// </summary>
+    /// <param name="title">Search parameter representing book title</param>
+    /// <param name="authorId">Search parameter representing the unique identifier of book author</param>
+    /// <param name="categoryId">Search parameter representing the unique identifier of the book category </param>
+    /// <param name="pageNumber">Search parameter representing the page number</param>
+    /// <param name="pageSize">Search parameter representing the number of books on the page</param>
+    /// <returns>books matching the search results</returns>
+    Task<IEnumerable<BookDto>> GetBooksBySearchParametersAsync(string? title, 
+        Guid? authorId, 
+        Guid? categoryId, 
+        int pageNumber, 
+        int pageSize);
+
+    /// <summary>
     /// Checks if the record with the same title and authorId exists in the storage.
     /// </summary>
     /// <param name="title">title of book as a <see cref="string"/></param>

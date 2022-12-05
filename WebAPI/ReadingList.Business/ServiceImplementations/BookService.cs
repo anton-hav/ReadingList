@@ -43,6 +43,33 @@ public class BookService : IBookService
     }
 
     /// <inheritdoc />
+    public async Task<IEnumerable<BookDto>> GetBooksBySearchParametersAsync(string? title, 
+        Guid? authorId, 
+        Guid? categoryId, 
+        int pageNumber, 
+        int pageSize)
+    {
+        var entities = _unitOfWork.Books.Get();
+
+        if (!string.IsNullOrEmpty(title))
+            entities = entities.Where(entity => entity.Title.Contains(title));
+
+        if (authorId != null && !Guid.Empty.Equals(authorId))
+            entities = entities.Where(entity => entity.AuthorId.Equals(authorId));
+
+        if (categoryId != null && !Guid.Empty.Equals(categoryId))
+            entities = entities.Where(entity => entity.CategoryId.Equals(categoryId));
+
+        var result = (await entities
+                .Skip(pageSize * pageNumber)
+                .Take(pageSize)
+                .ToListAsync())
+            .Select(entity => _mapper.Map<BookDto>(entity))
+            .ToArray();
+        return result;
+    }
+
+    /// <inheritdoc />
     public async Task<bool> IsBookExistByNameAsync(string title, Guid authorId)
     {
         var entity = await _unitOfWork.Books
