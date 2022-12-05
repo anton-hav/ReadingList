@@ -33,9 +33,4 @@
     <ProjectReference Include="..\ReadingList.DataBase\ReadingList.DataBase.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="MappingProfiles\" />
-    <Folder Include="Models\Requests\" />
-  </ItemGroup>
-
 </Project>

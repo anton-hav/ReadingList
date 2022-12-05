@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using ReadingList.Core.Abstractions;
@@ -11,35 +12,37 @@ namespace ReadingList.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoriesController : ControllerBase
+    public class BooksController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private readonly ICategoryService _categoryService;
-        
-        public CategoriesController(ICategoryService categoryService, 
-            IMapper mapper)
+        private readonly IBookService _bookService;
+
+
+        public BooksController(IMapper mapper, 
+            IBookService bookService)
         {
-            _categoryService = categoryService;
             _mapper = mapper;
+            _bookService = bookService;
         }
 
         /// <summary>
-        /// Get a category from storage with specified id.
+        /// Get a book from storage with specified id.
         /// </summary>
-        /// <param name="id">a category unique identifier as a <see cref="Guid"/></param>
-        /// <returns>A category with specified Id</returns>
-        /// <response code="200">Returns a category corresponding to the specified identifier.</response>
+        /// <param name="id">a book unique identifier as a <see cref="Guid"/></param>
+        /// <returns>A book with specified Id</returns>
+        /// <response code="200">Returns a book corresponding to the specified identifier.</response>
         /// <response code="404">Failed to find record in the database that match the specified id.</response>
         /// <response code="500">Unexpected error on the server side.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetBookResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(Nullable), StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetCategoryById(Guid id)
+        public async Task<IActionResult> GetBookById(Guid id)
         {
             try
             {
-                var category = await _categoryService.GetByIdAsync(id);
-                return Ok(category);
+                var book = await _bookService.GetByIdAsync(id);
+                var response = _mapper.Map<GetBookResponseModel>(book);
+                return Ok(response);
             }
             catch (ArgumentException ex)
             {
@@ -54,59 +57,63 @@ namespace ReadingList.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Get categories from storage.
+        /// Get books from storage.
         /// </summary>
-        /// <returns>all categories</returns>
-        /// <response code="200">Returns all categories.</response>
+        /// <returns>all books</returns>
+        /// <response code="200">Returns all books.</response>
         /// <response code="500">Unexpected error on the server side.</response>
         [HttpGet]
-        [ProducesResponseType(typeof(List<CategoryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<GetBookResponseModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetBooks()
         {
             try
             {
-                var categories = await _categoryService.GetCategoriesAsync();
+                var books = await _bookService.GetBooksAsync();
+                var response = _mapper.Map<List<GetBookResponseModel>>(books);
 
-                return Ok(categories);
+                return Ok(response);
             }
             catch (Exception ex)
             {
                 Log.Error($"{ex.Message}. {Environment.NewLine} {ex.StackTrace}");
                 return StatusCode(500, new ErrorModel { Message = "Unexpected error on the server side." });
             }
-            
+
         }
 
         /// <summary>
-        /// Add a new category to storage.
+        /// Add a new book to storage.
         /// </summary>
-        /// <param name="model">a category</param>
-        /// <returns>A newly created category</returns>
-        /// <response code="201">Returns the newly created category</response>
+        /// <param name="model">a book</param>
+        /// <returns>A newly created book</returns>
+        /// <response code="201">Returns the newly created book</response>
         /// <response code="400">Request contains null object or invalid object type</response>
         /// <response code="409">The same entry already exists in the storage.</response>
         /// <response code="500">Unexpected error on the server side.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(GetBookResponseModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> AddCategory([FromBody] AddOrUpdateCategoryRequestModel model)
+        public async Task<IActionResult> AddBook([FromBody] AddOrUpdateBookRequestModel model)
         {
             try
             {
-                if (model.Name.IsNullOrEmpty())
+                if (model.Title.IsNullOrEmpty()
+                    || model.AuthorId.Equals(default)
+                    || model.CategoryId.Equals(default))
                     throw new ArgumentNullException(nameof(model), "One or more object properties are null.");
 
-                var isExist = await _categoryService.IsCategoryExistByNameAsync(model.Name);
+                var isExist = await _bookService.IsBookExistByNameAsync(model.Title, model.AuthorId);
                 if (isExist)
                     throw new ArgumentException("The same entry already exists in the storage.", nameof(model));
 
-                var dto = _mapper.Map<CategoryDto>(model);
+                var dto = _mapper.Map<BookDto>(model);
                 dto.Id = Guid.NewGuid();
-                var result = await _categoryService.CreateAsync(dto);
+                var result = await _bookService.CreateAsync(dto);
+                var response = _mapper.Map<GetBookResponseModel>(dto);
 
-                return CreatedAtAction(nameof(GetCategoryById), new { id = dto.Id }, dto);
+                return CreatedAtAction(nameof(GetBookById), new { id = response.Id }, response);
             }
             catch (ArgumentNullException ex)
             {
@@ -126,36 +133,37 @@ namespace ReadingList.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Update or replace a category with specified Id in storage.
+        /// Update or replace a book with specified Id in storage.
         /// </summary>
-        /// <param name="id">a category unique identifier as a <see cref="Guid"/></param>
-        /// <param name="model">a category used for update</param>
-        /// <returns>A category with specified Id.</returns>
-        /// <response code="200">Returns the updated category</response>
+        /// <param name="id">a book unique identifier as a <see cref="Guid"/></param>
+        /// <param name="model">a book used for update</param>
+        /// <returns>A book with specified Id.</returns>
+        /// <response code="200">Returns the updated book</response>
         /// <response code="400">Request contains null object or invalid object type</response>
         /// <response code="409">Fail to find a record with the specified Id in the storage
         /// or the entry with the same property already exists in the storage.</response>
         /// <response code="500">Unexpected error on the server side.</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetBookResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] AddOrUpdateCategoryRequestModel model)
+        public async Task<IActionResult> UpdateBook(Guid id, [FromBody] AddOrUpdateBookRequestModel model)
         {
             try
             {
 
-                if (model.Name.IsNullOrEmpty())
+                if (model.Title.IsNullOrEmpty())
                     throw new ArgumentNullException(nameof(model), "One or more object properties are null.");
 
-                var isValid = await CheckCategoryForEditAsync(id, model.Name);
+                var isValid = await CheckBookForEditAsync(id, model.Title, model.AuthorId);
 
-                var dto = _mapper.Map<CategoryDto>(model);
+                var dto = _mapper.Map<BookDto>(model);
                 dto.Id = id;
-                var result = await _categoryService.UpdateAsync(dto);
+                var result = await _bookService.UpdateAsync(dto);
+                var response = _mapper.Map<GetBookResponseModel>(dto);
 
-                return Ok(dto);
+                return Ok(response);
             }
             catch (ArgumentNullException ex)
             {
@@ -175,45 +183,46 @@ namespace ReadingList.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Patch a category with specified Id in storage.
+        /// Patch a book with specified Id in storage.
         /// </summary>
-        /// <param name="id">a category unique identifier as a <see cref="Guid"/></param>
-        /// <param name="model">a category used for patching</param>
-        /// <returns>A category with specified Id.</returns>
-        /// <response code="200">Returns the updated category</response>
+        /// <param name="id">a book unique identifier as a <see cref="Guid"/></param>
+        /// <param name="model">a book used for patching</param>
+        /// <returns>A book with specified Id.</returns>
+        /// <response code="200">Returns the updated book</response>
         /// <response code="400">Request contains null object or invalid object type</response>
         /// <response code="409">Fail to find a record with the specified Id in the storage
         /// or the entry with the same property already exists in the storage.</response>
         /// <response code="500">Unexpected error on the server side.</response>
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GetBookResponseModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchCategory(Guid id, [FromBody] AddOrUpdateCategoryRequestModel model)
+        public async Task<IActionResult> PatchBook(Guid id, [FromBody] AddOrUpdateBookRequestModel model)
         {
             try
             {
-                if (model.Name.IsNullOrEmpty())
+                if (model.Title.IsNullOrEmpty())
                     throw new ArgumentNullException(nameof(model), "One or more object properties are null.");
 
                 if (id.Equals(default))
                     throw new ArgumentNullException(nameof(id), "A non-empty Id is required.");
 
-                var isExistById = await _categoryService.IsCategoryExistByIdAsync(id);
+                var isExistById = await _bookService.IsBookExistByIdAsync(id);
                 if (!isExistById)
                     throw new ArgumentException("Fail to find a record with the specified Id in the storage",
                         nameof(id));
 
-                var isExistByName = await _categoryService.IsCategoryExistByNameAsync(model.Name);
-                if (isExistByName)
+                var isExistByFullName = await _bookService.IsBookExistByNameAsync(model.Title, model.AuthorId);
+                if (isExistByFullName)
                     throw new ArgumentException("The same entry already exists in the storage.", nameof(model));
 
-                var dto = _mapper.Map<CategoryDto>(model);
+                var dto = _mapper.Map<BookDto>(model);
                 dto.Id = id;
-                var result = await _categoryService.PatchAsync(id, dto);
+                var result = await _bookService.PatchAsync(id, dto);
+                var response = _mapper.Map<GetBookResponseModel>(dto);
 
-                return Ok(dto);
+                return Ok(response);
             }
             catch (ArgumentNullException ex)
             {
@@ -233,33 +242,33 @@ namespace ReadingList.WebAPI.Controllers
         }
 
         /// <summary>
-        /// Delete a category with specified Id from the storage.
+        /// Delete a book with specified Id from the storage.
         /// </summary>
-        /// <param name="id">a category unique identifier as a <see cref="Guid"/></param>
+        /// <param name="id">a book unique identifier as a <see cref="Guid"/></param>
         /// <returns></returns>
         /// <response code="204">Successful deletion</response>
         /// <response code="400">Request contains null object or invalid object type</response>
         /// <response code="409">Fail to find a record with the specified Id in the storage
         /// or the entry with the same property already exists in the storage.</response>
         /// <response code="500">Unexpected error on the server side.</response>
-        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(GetBookResponseModel), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategory(Guid id)
+        public async Task<IActionResult> DeleteBook(Guid id)
         {
             try
             {
                 if (id.Equals(default))
                     throw new ArgumentNullException(nameof(id), "A non-empty Id is required.");
 
-                var isExistById = await _categoryService.IsCategoryExistByIdAsync(id);
+                var isExistById = await _bookService.IsBookExistByIdAsync(id);
                 if (!isExistById)
                     throw new ArgumentException("Fail to find a record with the specified Id in the storage",
                         nameof(id));
-                
-                var result = await _categoryService.DeleteAsync(id);
+
+                var result = await _bookService.DeleteAsync(id);
 
                 return NoContent();
 
@@ -283,25 +292,26 @@ namespace ReadingList.WebAPI.Controllers
 
         // todo: implement validation used FluentValidation
         /// <summary>
-        /// Validate a category model for update.
+        /// Validate a book model for update.
         /// </summary>
-        /// <param name="id">a unique identifier that defines the category to be updated </param>
-        /// <param name="categoryName">a category name</param>
+        /// <param name="id">a unique identifier that defines the book to be updated </param>
+        /// <param name="bookTitle">a book title</param>
+        /// <param name="bookAuthorId">unique identifier of the book's author</param>
         /// <returns>A boolean</returns>
         /// <exception cref="ArgumentNullException">If the id is empty.</exception>
         /// <exception cref="ArgumentException">If the same entry already exists in the storage.</exception>
-        private async Task<bool> CheckCategoryForEditAsync(Guid id, string categoryName)
+        private async Task<bool> CheckBookForEditAsync(Guid id, string bookTitle, Guid bookAuthorId)
         {
-            var isExist = await _categoryService
-                .IsCategoryExistByNameAsync(categoryName);
+            var isExist = await _bookService
+                .IsBookExistByNameAsync(bookTitle, bookAuthorId);
 
             if (isExist)
             {
                 if (!id.Equals(default))
                 {
-                    var isCategoryTheSame = await IsCategoryTheSameAsync(id, categoryName);
+                    var isBookTheSame = await IsBookTheSameAsync(id, bookTitle, bookAuthorId);
 
-                    if (isCategoryTheSame)
+                    if (isBookTheSame)
                     {
                         return true;
                     }
@@ -311,24 +321,26 @@ namespace ReadingList.WebAPI.Controllers
                     throw new ArgumentNullException(nameof(id), "A non-empty Id is required.");
                 }
 
-                throw new ArgumentException("The same entry already exists in the storage.", nameof(categoryName)); ;
+                throw new ArgumentException("The same entry already exists in the storage.", nameof(bookTitle)); ;
             }
             return true;
         }
 
         /// <summary>
-        /// Check if the existing category is the same.
+        /// Check if the existing book is the same.
         /// </summary>
         /// <remarks>
         /// This check is necessary to ensure idempotent behavior of the PUT method.
         /// </remarks>
-        /// <param name="id"></param>
-        /// <param name="categoryName"></param>
+        /// <param name="id">book unique identifier</param>
+        /// <param name="bookTitle">book title</param>
+        /// <param name="bookAuthorId">unique identifier of the book's author</param>
         /// <returns></returns>
-        private async Task<bool> IsCategoryTheSameAsync(Guid id, string categoryName)
+        private async Task<bool> IsBookTheSameAsync(Guid id, string bookTitle, Guid bookAuthorId)
         {
-            var dto = await _categoryService.GetByIdAsync(id);
-            return dto.Name.Equals(categoryName);
+            var dto = await _bookService.GetByIdAsync(id);
+            return dto.Title.Equals(bookTitle)
+                   && dto.AuthorId.Equals(bookAuthorId);
         }
     }
 }

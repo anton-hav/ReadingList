@@ -53,6 +53,8 @@ namespace ReadingList.WebAPI
 
             // Add business services
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IAuthorService, AuthorService>();
+            builder.Services.AddScoped<IBookService, BookService>();
 
             // Add repositories
             builder.Services.AddScoped<IRepository<Author>, Repository<Author>>();
