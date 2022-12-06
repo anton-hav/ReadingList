@@ -4,6 +4,7 @@ import Grid from '@mui/material/Grid';
 
 import AddNewBookButton from './components/add-new-book-button/add-new-book-button'
 import HorizontalLinearStepper from './components/add-new-book-stepper/add-new-book-stepper'
+import EnhancedTable from './components/book-table/book-table'
 
 import './App.css';
 
@@ -36,6 +37,11 @@ class App extends Component {
     }
 
     this.handleActivateAddBookForm = this._handleActivateAddBookForm.bind(this);
+    //this.handleCloseAddBookStepper = this._handleCloseAddBookStepper.bind(this);
+  }
+
+  handleCloseAddBookStepper = () => {
+    this.setState({isAddBookFormActive: false});
   }
 
   render() {
@@ -49,11 +55,16 @@ class App extends Component {
             <main className="App-main">
             <Container maxWidth="sm">
                 <Grid container spacing={2}>
-                    <Grid item xs={8}>                
-                        <AddNewBookButton onClick={this.handleActivateAddBookForm}/>                             
+                    <Grid item xs={8}>    
+                    {this.state.isAddBookFormActive ? null : <AddNewBookButton onClick={this.handleActivateAddBookForm}/>}            
+                                                     
                     </Grid>
-                    <Grid item xs={12}>                
-                        <HorizontalLinearStepper/>                             
+                    <Grid item xs={12}>
+                    {this.state.isAddBookFormActive ? <HorizontalLinearStepper onClick={this.handleCloseAddBookStepper}/> : <div></div>}                
+                                                     
+                    </Grid>
+                    <Grid item xs={12}>                                  
+                      <EnhancedTable/>                               
                     </Grid>
                 </Grid>
             </Container>                 
@@ -63,8 +74,12 @@ class App extends Component {
   }
 
   _handleActivateAddBookForm() {
-    this.setState({isAdditionFormActive: !this.state.isAddBookFormActive})
+    this.setState({isAddBookFormActive: !this.state.isAddBookFormActive})
   }
+
+
+
+
 }
 
 export default App;

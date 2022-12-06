@@ -22,7 +22,7 @@ export default class BookService {
         // if (isBookExist) {
         //     return "Creation failed. Book already exists.";
         // }
-        let result = await this._apiService.post("Books", book);
-        return result.id !== undefined;      
+        let result = await this._apiService.post("Books", book);        
+        return result;      
     }
 }

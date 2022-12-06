@@ -14,6 +14,7 @@ import ReadingStatusStep from '../reading-status-step/reading-status-step';
 import BookSummaryStep from '../book-summary-step/book-summary-step';
 
 import BookService from "../../services/books/book-service";
+import BookNoteService from '../../services/book-notes/book-notes-service';
 
 
 
@@ -100,7 +101,7 @@ import BookService from "../../services/books/book-service";
 
 
 
-export default function HorizontalLinearStepper() {
+export default function HorizontalLinearStepper(props) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [authorId, setAuthorId] = React.useState('');
   const [categoryId, setCategoryId] = React.useState('');
@@ -109,9 +110,11 @@ export default function HorizontalLinearStepper() {
   const [status, setStatus] = React.useState(0);
   const [errorMessages, setErrorMessages] = React.useState(Array(3).fill(null));
   const [isNextAllowed, setIsNextAllowed] = React.useState(false);
+  const [resultMessage, setResultMessage] = React.useState('');
   // const [skipped, setSkipped] = React.useState(new Set());
 
   const _bookService = new BookService();
+  const _bookNoteService = new BookNoteService();
   const steps = ['Category', 'Author', 'Title', 'Priority', 'Status', 'Summary'];
 
   const handleNext = () => {       
@@ -131,22 +134,42 @@ export default function HorizontalLinearStepper() {
     setIsNextAllowed(true); 
   };
 
-  const handleReset = () => {
+  const handleReset = (props) => {
     setActiveStep(0);
+    
   };
 
   const handleAddBook = async () => {
+    let message = '';
+    
     let book = {
       'title': title, 
       'authorId': authorId, 
       'categoryId': categoryId,
     };
 
-    let result = await _bookService.createNewBook(book);
+    let bookResult = await _bookService.createNewBook(book);
     
-    if (result) {
-      setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    if (bookResult.id !== undefined) {
+      let bookNote = {
+        'bookId': bookResult.id,
+        'priority': priority,
+        'status': status,
+      };
+      let noteResult = await _bookNoteService.createNewBookNote(bookNote);
+
+      if (noteResult.id!== undefined) {
+        message = 'The new book was successfully added.';
+      }
+      else {
+        message = 'Something went wrong. Please try again later.';
+      }      
     }
+    else {
+      message = 'Something went wrong. Please try again later.';
+    }
+    setResultMessage(message);
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
   }
 
   const handleAuthorSelect = (event) => {    
@@ -186,12 +209,12 @@ export default function HorizontalLinearStepper() {
   }
 
   const handlePriorityChange = (event) => {
-    setPriority(event.target.value);
+    setPriority(Number(event.target.value));
     setIsNextAllowed(true);
   }
 
   const handleStatusChange = (event) => {
-    setStatus(event.target.value);
+    setStatus(Number(event.target.value));
     setIsNextAllowed(true);
   }
 
@@ -199,11 +222,11 @@ export default function HorizontalLinearStepper() {
     return (
     <React.Fragment>
       <Typography sx={{ mt: 2, mb: 1 }}>
-        All steps completed - you&apos;re add new book.
+        All steps completed. {resultMessage}.
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
         <Box sx={{ flex: '1 1 auto' }} />
-        <Button onClick={handleReset}>Ok</Button>
+        <Button onClick={props.onClick}>Ok</Button>
       </Box>
     </React.Fragment>);
   }
