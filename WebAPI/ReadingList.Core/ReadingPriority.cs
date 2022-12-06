@@ -2,7 +2,10 @@
 
 public enum ReadingPriority
 {
+    Never,
     Low,
     Medium,
-    High
+    High,
+    Urgent,
+    RightNow
 }

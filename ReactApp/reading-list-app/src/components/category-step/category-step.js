@@ -1,82 +1,85 @@
-import React, {Component} from "react";
+import React, {useEffect} from "react";
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Box from '@mui/material/Box';
 import CategoryService from "../../services/categories/category-service";
 
+const _categoryService = new CategoryService();
 
+// class CategoryStep extends Component {
 
-// export default function CategoryStep() {
-//   const [age, setAge] = useState('');
+//   constructor(props) {
+//     super(props);
+//     this.state = {
+//       category: '',
+//       items: [] 
+//     };
 
-//   const handleChange = (event) => {
-//     setAge(event.target.value);
-//   };
+//     this._categoryService = new CategoryService();
+//     (async () => this.setSelectItems())();
+//   }
 
-//   const items = [
-//     <MenuItem value={10}>Ten</MenuItem>,
-//     <MenuItem value={20}>Twenty</MenuItem>,
-//     <MenuItem value={30}>Thirty</MenuItem>,
-//     <MenuItem value={40}>Forty</MenuItem>
-//   ]
+//   async setSelectItems(){
+//     let categories = await this._categoryService.getAllCategoriesFromApi();
+//     this.setState({items: categories.map((item) => <MenuItem key={item.id.toString()} value={item.id}>{item.name}</MenuItem>)})
+//   }  
   
-//   return (
-//     <FormControl fullWidth>
-//       <InputLabel id="demo-simple-select-label">Age</InputLabel>
-//       <Select
-//         labelId="demo-simple-select-label"
-//         id="demo-simple-select"
-//         value={age}
-//         label="Category"
-//         onChange={handleChange}
-//       >
-//         {items}
-//       </Select>
-//     </FormControl>
-//   );
+//   handleChange (sender, event) {
+//     sender.setState({category: event.target.value});
+//   }
   
+//   render() {
+//     return (
+//       <FormControl fullWidth>
+//         <InputLabel id="demo-simple-select-label">Category</InputLabel>
+//         <Select
+//           labelId="demo-simple-select-label"
+//           id="demo-simple-select"
+//           value={this.state.category}
+//           label="Category"
+//           onChange={(event) => this.handleChange(this, event)}
+//         >
+//           {this.state.items}
+//         </Select>
+//       </FormControl>
+//     );
+//   }  
 // }
 
-class CategoryStep extends Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      category: '',
-      items: [] 
-    };
+// export default CategoryStep;
 
-    this._categoryService = new CategoryService();
-    (async () => this.setSelectItems())();
-  }
 
-  async setSelectItems(){
-    let categories = await this._categoryService.getAllCategoriesFromApi();
-    this.setState({items: categories.map((item) => <MenuItem key={item.id.toString()} value={item.id}>{item.name}</MenuItem>)})
-  }  
-  
-  handleChange (sender, event) {
-    sender.setState({category: event.target.value});
-  }
-  
-  render() {
-    return (
+export default function CategoryStep(props) {
+  const [items, setItems] = React.useState([]);
+
+  useEffect(() => {
+      async function getItems() {   
+        const data = await _categoryService.getAllCategoriesFromApi();
+        setItems(data);
+      };
+
+      if (items.length === 0) {
+        getItems();
+      }
+  });    
+
+  return (
+    <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
         <InputLabel id="demo-simple-select-label">Category</InputLabel>
         <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
-          value={this.state.category}
+          value={items.length === 0 ? '' : props.value}
           label="Category"
-          onChange={(event) => this.handleChange(this, event)}
+          onChange={props.onSelect}
         >
-          {this.state.items}
+        {items.map((item) => <MenuItem key={item.id.toString()} value={item.id}>{item.name}</MenuItem>)}           
         </Select>
       </FormControl>
-    );
-  }  
+    </Box>
+  );
 }
-
-
-export default CategoryStep;

@@ -9,4 +9,9 @@ export default class CategoryService {
         let categories = await this._apiService.get("Categories", "");
         return categories;
     }
+
+    async getCategoryByIdFromApi(id) {
+        let category = await this._apiService.getById("Categories", id);
+        return category;
+    }
 }

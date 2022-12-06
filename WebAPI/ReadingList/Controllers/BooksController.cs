@@ -102,6 +102,7 @@ namespace ReadingList.WebAPI.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(GetBookResponseModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddBook([FromBody] AddOrUpdateBookRequestModel model)
         {
