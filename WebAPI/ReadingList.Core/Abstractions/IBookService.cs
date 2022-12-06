@@ -40,14 +40,14 @@ public interface IBookService
     /// <param name="title">title of book as a <see cref="string"/></param>
     /// <param name="authorId">author unique identifier as a <see cref="Guid"/></param>
     /// <returns>A boolean</returns>
-    Task<bool> IsBookExistByNameAsync(string title, Guid authorId);
+    Task<bool> IsBookExistAsync(string title, Guid authorId);
 
     /// <summary>
     /// Checks if the record exists in the storage by Id.
     /// </summary>
     /// <param name="id">unique identifier as a <see cref="Guid"/></param>
     /// <returns>A boolean</returns>
-    Task<bool> IsBookExistByIdAsync(Guid id);
+    Task<bool> IsBookExistAsync(Guid id);
 
     // CREATE
 

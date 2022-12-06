@@ -63,6 +63,7 @@ public class BookService : IBookService
         var result = (await entities
                 .Skip(pageSize * pageNumber)
                 .Take(pageSize)
+                .AsNoTracking()
                 .ToListAsync())
             .Select(entity => _mapper.Map<BookDto>(entity))
             .ToArray();
@@ -70,7 +71,7 @@ public class BookService : IBookService
     }
 
     /// <inheritdoc />
-    public async Task<bool> IsBookExistByNameAsync(string title, Guid authorId)
+    public async Task<bool> IsBookExistAsync(string title, Guid authorId)
     {
         var entity = await _unitOfWork.Books
             .Get()
@@ -83,7 +84,7 @@ public class BookService : IBookService
     }
 
     /// <inheritdoc />
-    public async Task<bool> IsBookExistByIdAsync(Guid id)
+    public async Task<bool> IsBookExistAsync(Guid id)
     {
         var entity = await _unitOfWork.Books
             .Get()
@@ -111,10 +112,10 @@ public class BookService : IBookService
     /// <exception cref="ArgumentException"></exception>
     public async Task<int> UpdateAsync(BookDto dto)
     {
-        var entity = _mapper.Map<Author>(dto);
+        var entity = _mapper.Map<Book>(dto);
         if (entity == null)
             throw new ArgumentException("Mapping BookDto to Book was not possible.", nameof(dto));
-        _unitOfWork.Authors.Update(entity);
+        _unitOfWork.Books.Update(entity);
         return await _unitOfWork.Commit();
     }
 

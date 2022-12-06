@@ -55,6 +55,7 @@ namespace ReadingList.WebAPI
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IBookNoteService, BookNoteService>();
 
             // Add repositories
             builder.Services.AddScoped<IRepository<Author>, Repository<Author>>();
