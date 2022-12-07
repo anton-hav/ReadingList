@@ -52,18 +52,25 @@ class App extends Component {
                 <h1 className="App-title">Reading list</h1>
             </header>
 
-            <main className="App-main">
-            <Container maxWidth="sm">
-                <Grid container spacing={2}>
-                    <Grid item xs={8}>    
+            <main className="app-main">
+            <Container maxWidth="m">
+                <Grid 
+                  container
+                  direction="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  pacing={2} 
+                  className="app-grid" 
+                  >
+                    <Grid item xs={6}>    
                     {this.state.isAddBookFormActive ? null : <AddNewBookButton onClick={this.handleActivateAddBookForm}/>}            
                                                      
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={5}>
                     {this.state.isAddBookFormActive ? <HorizontalLinearStepper onClick={this.handleCloseAddBookStepper}/> : <div></div>}                
                                                      
                     </Grid>
-                    <Grid item xs={12}>                                  
+                    <Grid item xs={10} className="grid-item-book-table">                                  
                       <EnhancedTable/>                               
                     </Grid>
                 </Grid>

@@ -48,8 +48,17 @@
   
 }
 
-.App-main {
-  background-color: #f0f0f0;
+.app-main {
+  background-color: #ffffff;
   margin-top: 00px;
   height: 90vh;  
+  
+}
+
+.app-grid {
+  padding-top: 20px;  
+}
+
+.grid-item-book-table {
+  padding-top: 40px;
 }
