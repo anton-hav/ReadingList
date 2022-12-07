@@ -35,6 +35,19 @@ public interface IBookNoteService
         int pageSize);
 
     /// <summary>
+    /// Get book notes count from storage by search parameters
+    /// </summary>
+    /// <param name="authorId">an author unique identifier as a <see cref="Guid"/></param>
+    /// <param name="categoryId">a category unique identifier as a <see cref="Guid"/></param>
+    /// <param name="priority">a book reading priority as a <see cref="ReadingPriority"/></param>
+    /// <param name="status">a book reading status as a <see cref="ReadingStatus"/></param>
+    /// <returns></returns>
+    Task<int> GetBookNotesCountBySearchParametersAsync(Guid? authorId, 
+        Guid? categoryId, 
+        ReadingPriority? priority,
+        ReadingStatus? status);
+
+    /// <summary>
     /// Checks if the record with the same bookId exists in the storage.
     /// </summary>
     /// <param name="bookId">book unique identifier as a <see cref="Guid"/></param>

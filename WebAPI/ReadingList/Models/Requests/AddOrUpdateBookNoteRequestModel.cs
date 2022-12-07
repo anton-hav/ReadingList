@@ -14,12 +14,13 @@ public class AddOrUpdateBookNoteRequestModel
     public Guid BookId { get; set; }
 
     /// <summary>
-    /// Book reading priority
+    /// Book reading priority from Never to Right Now
     /// </summary>
     public ReadingPriority Priority { get; set; }
 
     /// <summary>
     /// Book reading status
+    /// (Scheduled = 0, InProgress = 1, Completed = 2, Skipped = 3)
     /// </summary>
     public ReadingStatus Status { get; set; }
 }

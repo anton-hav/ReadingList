@@ -70,6 +70,28 @@ public class BookNoteService : IBookNoteService
     }
 
     /// <inheritdoc />
+    public async Task<int> GetBookNotesCountBySearchParametersAsync(Guid? authorId, Guid? categoryId, ReadingPriority? priority,
+        ReadingStatus? status)
+    {
+        var entities = _unitOfWork.BookNotes.Get();
+
+        if (authorId != null && !Guid.Empty.Equals(authorId))
+            entities = entities.Where(entity => entity.Book.AuthorId.Equals(authorId));
+
+        if (categoryId != null && !Guid.Empty.Equals(categoryId))
+            entities = entities.Where(entity => entity.Book.CategoryId.Equals(categoryId));
+
+        if (priority != null && Enum.IsDefined(typeof(ReadingPriority), priority))
+            entities = entities.Where(entity => entity.Priority.Equals(priority));
+
+        if (status != null && Enum.IsDefined(typeof(ReadingStatus), status))
+            entities = entities.Where(entity => entity.Status.Equals(status));
+
+        var result = await entities.AsNoTracking().CountAsync();
+        return result;
+    }
+
+    /// <inheritdoc />
     public async Task<bool> IsBookNoteExistByBookIdAsync(Guid bookId)
     {
         var entity = await _unitOfWork.BookNotes

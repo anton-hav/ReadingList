@@ -61,6 +61,7 @@ namespace ReadingList.WebAPI.Controllers
         /// Get book notes from storage.
         /// </summary>
         /// <returns>all the book notes that match the search parameters</returns>
+        /// <param name="model">search parameters as a <see cref="GetBookNotesRequestModel"/></param>
         /// <response code="200">Returns all book notes that match the search parameters.</response>
         /// <response code="500">Unexpected error on the server side.</response>
         [HttpGet]
