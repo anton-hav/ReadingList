@@ -3,8 +3,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
-import AuthorService from "../../services/authors/author-service";
-import CategoryService from "../../services/categories/category-service";
+import AuthorService from "../../services/author-service";
+import CategoryService from "../../services/category-service";
 
  
 

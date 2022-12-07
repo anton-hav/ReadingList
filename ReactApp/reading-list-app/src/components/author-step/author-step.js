@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
-import AuthorService from "../../services/authors/author-service";
+import AuthorService from "../../services/author-service";
 
 
 const _authorService = new AuthorService();

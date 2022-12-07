@@ -13,8 +13,8 @@ import ReadingPriorityStep from '../reading-priority-step/reading-priority-step'
 import ReadingStatusStep from '../reading-status-step/reading-status-step';
 import BookSummaryStep from '../book-summary-step/book-summary-step';
 
-import BookService from "../../services/books/book-service";
-import BookNoteService from '../../services/book-notes/book-notes-service';
+import BookService from "../../services/book-service";
+import BookNoteService from '../../services/book-notes-service';
 
 
 

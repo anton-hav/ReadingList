@@ -1,4 +1,5 @@
-import * as React from 'react';
+//import * as React from 'react';
+import React, {useEffect} from "react";
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -14,34 +15,36 @@ import Switch from '@mui/material/Switch';
 import {EnhancedTableHead} from './book-table-head';
 import {EnhancedTableToolbar} from './book-table-toolbar';
 
+import BookNoteService from '../../services/book-notes-service';
+
 import Priorities from '../../utils/priorities-list';
 import Statuses from '../../utils/statuses-list';
 
-function createData(title, author, category, priority, status) {
-  return {
-    title,
-    author,
-    category,
-    priority,
-    status,
-  };
-}
+let _bookNoteService = new BookNoteService();
 
-const rows = [
-  createData('Cupcake', 'Terry Pratchett', 'category one', 0, 1),
-  createData('Donut', 'Dan Abnett', 'category one', 1, 2),
-  createData('Eclair', 'Terry Pratchett', 'category one', 2, 3),
-  createData('Frozen yoghurt', 'Dan Abnett', 'category one', 3, 0),
-  createData('Gingerbread', 'Terry Pratchett', 'category one', 4, 1),
-  createData('Honeycomb', 'Dan Abnett', 'category one', 5, 2),
-  createData('Ice cream sandwich', 'Terry Pratchett', 'category one', 0, 3),
-  createData('Jelly Bean', 'Dan Abnett', 'category two', 1, 0),
-  createData('This method is created for cross-browser compatibility', 'Terry Pratchett', 'category two', 2, 1),
-  createData('Lollipop', 'Dan Abnett', 'category two', 3, 2),
-  createData('Marshmallow', 'Terry Pratchett', 'category two', 4, 3),
-  createData('Nougat', 'Dan Abnett', 'category two', 5, 0),
-  createData('Oreo', 'Terry Pratchett', 'category two', 0, 2),
-];
+// const rows = [
+//   createData('Cupcake', 'Terry Pratchett', 'category one', 0, 1),
+//   createData('Donut', 'Dan Abnett', 'category one', 1, 2),
+//   createData('Eclair', 'Terry Pratchett', 'category one', 2, 3),
+//   createData('Frozen yoghurt', 'Dan Abnett', 'category one', 3, 0),
+//   createData('Gingerbread', 'Terry Pratchett', 'category one', 4, 1),
+//   createData('Honeycomb', 'Dan Abnett', 'category one', 5, 2),
+//   createData('Ice cream sandwich', 'Terry Pratchett', 'category one', 0, 3),
+//   createData('Jelly Bean', 'Dan Abnett', 'category two', 1, 0),
+//   createData('This method is created for cross-browser compatibility', 'Terry Pratchett', 'category two', 2, 1),
+//   createData('Lollipop', 'Dan Abnett', 'category two', 3, 2),
+//   createData('Marshmallow', 'Terry Pratchett', 'category two', 4, 3),
+//   createData('Nougat', 'Dan Abnett', 'category two', 5, 0),
+//   createData('Oreo', 'Terry Pratchett', 'category two', 0, 2),
+// ];
+
+//+++++++++++++++++++++++++++++++++
+async function testGetBook(){
+    let id = "8f76306f-e942-40da-a958-100f32b301a8";
+    let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(id);
+    return note;
+}
+//+++++++++++++++++++++++++++++++++
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -80,6 +83,21 @@ export default function EnhancedTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows, setRows] = React.useState([]);
+
+  //++++++++++++++++++++++++++++++
+  useEffect(() => {
+    async function setDataToRows() {   
+      const data = await _bookNoteService.getHumanReadableBooksFromApi();
+      setRows(data);
+    };
+
+    if (rows.length === 0) {
+      setDataToRows();
+    }
+});    
+
+  //++++++++++++++++++++++++++++++
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';

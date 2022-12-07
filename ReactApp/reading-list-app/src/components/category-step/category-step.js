@@ -4,7 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Box from '@mui/material/Box';
-import CategoryService from "../../services/categories/category-service";
+import CategoryService from "../../services/category-service";
 
 const _categoryService = new CategoryService();
 
