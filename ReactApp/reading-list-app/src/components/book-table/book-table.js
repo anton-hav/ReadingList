@@ -105,7 +105,7 @@ export default function EnhancedTable() {
    * Sets the human readable book notes specified pagination parameters from the api to rows.
    */
   async function updateRowsData() {
-    let parameters = new PaginationParameters(rowsPerPage, page);
+    let parameters = new PaginationParameters(rowsPerPage, page, orderBy, order);
     const data = await _bookNoteService.getHumanReadableBooksFromApi(parameters);
     setRows(data);
   }
@@ -120,10 +120,20 @@ export default function EnhancedTable() {
 
   //++++++++++++++++++++++++++++++
 
+  /**
+   * Sets the new value to order and orderBy states 
+   * and clean up table data to default.
+   * @param {*} event - representing the React event
+   * @param {string} property - new order property value 
+   */
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
+    setPage(0);
+    // It is necessary to clear the rows 
+    // for the useEffect to work correctly.
+    setRows([]);
   };
 
   const handleSelectAllClick = (event) => {
@@ -206,9 +216,9 @@ export default function EnhancedTable() {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.sort(getComparator(order, orderBy)).slice() */}
-              {stableSort(rows, getComparator(order, orderBy))
+              {//stableSort(rows, getComparator(order, orderBy))
                 //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
+                rows.map((row, index) => {
                   const isItemSelected = isSelected(row.title);
                   const labelId = `enhanced-table-checkbox-${index}`;
 

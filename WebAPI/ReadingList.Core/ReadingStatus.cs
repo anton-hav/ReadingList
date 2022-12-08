@@ -1,7 +1,4 @@
-﻿//using System.Text.Json.Serialization;
-//using Newtonsoft.Json.Converters;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 namespace ReadingList.Core;

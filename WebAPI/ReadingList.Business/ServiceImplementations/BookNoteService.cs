@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions.Impl;
 using Microsoft.EntityFrameworkCore;
 using ReadingList.Core;
 using ReadingList.Core.Abstractions;
@@ -46,7 +47,9 @@ public class BookNoteService : IBookNoteService
         ReadingPriority? priority, 
         ReadingStatus? status, 
         int pageNumber, 
-        int pageSize)
+        int pageSize,
+        OrderParameter? orderParameter,
+        bool isOrderDescending)
     {
         var entities = _unitOfWork.BookNotes.Get();
 
@@ -58,6 +61,14 @@ public class BookNoteService : IBookNoteService
 
         if (status != null)
             entities = entities.Where(entity => entity.Status.Equals(status));
+
+        // Ordered query by orderParameter and isOrderDescending flag
+        if (orderParameter != null
+            && Enum.IsDefined(typeof(OrderParameter), orderParameter)
+            && !OrderParameter.None.Equals(orderParameter))
+        {
+            entities = OrderByParameters(entities, (OrderParameter)orderParameter, isOrderDescending);
+        }
 
         var result = (await entities
                 .Skip(pageSize * pageNumber)
@@ -186,5 +197,40 @@ public class BookNoteService : IBookNoteService
         }
 
         throw new ArgumentException("The book notes for removing doesn't exist", nameof(id));
+    }
+
+    /// <summary>
+    /// Orders query by parameters
+    /// </summary>
+    /// <param name="query"></param>
+    /// <param name="orderParameter">Order parameter as a <see cref="OrderParameter"/></param>
+    /// <param name="isOrderDescending">Flag indicating whether the sorting should be in descending order as a <see cref="bool"/></param>
+    /// <returns>ordered query as a <see cref="IQueryable{T}"/> where T is <see cref="BookNote"/></returns>
+    private IQueryable<BookNote> OrderByParameters(IQueryable<BookNote> query,
+        OrderParameter orderParameter,
+        bool isOrderDescending)
+    {
+        if (OrderParameter.Author.Equals(orderParameter))
+            query = isOrderDescending
+                ? query.OrderByDescending(entity => entity.Book.Author)
+                : query.OrderBy(entity => entity.Book.Author);
+        else if (OrderParameter.Title.Equals(orderParameter))
+            query = isOrderDescending
+                ? query.OrderByDescending(entity => entity.Book.Title.ToUpper())
+                : query.OrderBy(entity => entity.Book.Title.ToUpper());
+        else if (OrderParameter.Category.Equals(orderParameter))
+            query = isOrderDescending
+                ? query.OrderByDescending(entity => entity.Book.Categories)
+                : query.OrderBy(entity => entity.Book.Categories);
+        else if (OrderParameter.Priority.Equals(orderParameter))
+            query = isOrderDescending
+                ? query.OrderByDescending(entity => entity.Priority)
+                : query.OrderBy(entity => entity.Priority);
+        else if (OrderParameter.Status.Equals(orderParameter))
+            query = isOrderDescending
+                ? query.OrderByDescending(entity => entity.Status)
+                : query.OrderBy(entity => entity.Status);
+        
+        return query;
     }
 }

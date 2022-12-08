@@ -79,7 +79,9 @@ namespace ReadingList.WebAPI.Controllers
                         model.Priority, 
                         model.Status, 
                         model.PageNumber, 
-                        model.PageSize);
+                        model.PageSize,
+                        model.OrderBy,
+                        model.IsOrderDescending);
                 var response = _mapper.Map<IEnumerable<GetBookNoteResponseModel>>(bookNotes);
 
                 return Ok(response);

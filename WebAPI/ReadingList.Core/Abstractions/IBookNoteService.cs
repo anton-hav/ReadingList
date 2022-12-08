@@ -27,12 +27,16 @@ public interface IBookNoteService
     /// <param name="status">a reading status as a <see cref="ReadingStatus"/></param>
     /// <param name="pageNumber">Search parameter representing the page number</param>
     /// <param name="pageSize">Search parameter representing the number of book notes on the page</param>
+    /// <param name="orderParameter">Order parameter as a <see cref="OrderParameter"/></param>
+    /// <param name="isOrderDescending">Flag indicating whether the sorting should be in descending order as a <see cref="bool"/></param>
     /// <returns>book notes matching the search results</returns>
     Task<IEnumerable<BookNoteDto>> GetBookNotesBySearchParametersAsync(Guid? bookId,
         ReadingPriority? priority,
         ReadingStatus? status,
         int pageNumber,
-        int pageSize);
+        int pageSize,
+        OrderParameter? orderParameter,
+        bool isOrderDescending);
 
     /// <summary>
     /// Get book notes count from storage by search parameters
