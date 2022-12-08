@@ -1,24 +1,25 @@
 //import * as React from 'react';
-import React, {useEffect} from "react";
-import Box from '@mui/material/Box';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
+import React, { useEffect } from "react";
+import Box from "@mui/material/Box";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Switch from "@mui/material/Switch";
 
-import {EnhancedTableHead} from './book-table-head';
-import {EnhancedTableToolbar} from './book-table-toolbar';
+import { EnhancedTableHead } from "./book-table-head";
+import { EnhancedTableToolbar } from "./book-table-toolbar";
 
-import BookNoteService from '../../services/book-notes-service';
+import BookNoteService from "../../services/book-notes-service";
 
-import Priorities from '../../utils/priorities-list';
-import Statuses from '../../utils/statuses-list';
+import Priorities from "../../utils/priorities-list";
+import Statuses from "../../utils/statuses-list";
+import PaginationParameters from "../../utils/paginationParameters";
 
 let _bookNoteService = new BookNoteService();
 
@@ -39,10 +40,10 @@ let _bookNoteService = new BookNoteService();
 // ];
 
 //+++++++++++++++++++++++++++++++++
-async function testGetBook(){
-    let id = "8f76306f-e942-40da-a958-100f32b301a8";
-    let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(id);
-    return note;
+async function testGetBook() {
+  let id = "8f76306f-e942-40da-a958-100f32b301a8";
+  let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(id);
+  return note;
 }
 //+++++++++++++++++++++++++++++++++
 
@@ -57,7 +58,7 @@ function descendingComparator(a, b, orderBy) {
 }
 
 function getComparator(order, orderBy) {
-  return order === 'desc'
+  return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
@@ -77,31 +78,51 @@ function stableSort(array, comparator) {
 }
 
 export default function EnhancedTable() {
-  const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('author');
-  const [selected, setSelected] = React.useState([]);
+  const [order, setOrder] = React.useState("asc");
+  const [orderBy, setOrderBy] = React.useState("author");
+  const [selected, setSelected] = React.useState([]);  
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+  const [rowsCount, setRowsCount] = React.useState(0);
 
   //++++++++++++++++++++++++++++++
   useEffect(() => {
-    async function setDataToRows() {   
-      const data = await _bookNoteService.getHumanReadableBooksFromApi();
-      setRows(data);
-    };
+    async function setDataToRows() {
+      //const data = await _bookNoteService.getHumanReadableBooksFromApi();
+      //setRows(data);
+      updateRowsCount();
+      updateRowsData();      
+    }
 
     if (rows.length === 0) {
       setDataToRows();
     }
-});    
+  });
+
+  /**
+   * Sets the human readable book notes specified pagination parameters from the api to rows.
+   */
+  async function updateRowsData() {
+    let parameters = new PaginationParameters(rowsPerPage, page);
+    const data = await _bookNoteService.getHumanReadableBooksFromApi(parameters);
+    setRows(data);
+  }
+
+  /**
+   * Sets the number of rows equal to the number of book notes in the storage.
+   */
+  const updateRowsCount = async () => {
+    const count = await _bookNoteService.getBookNoteCountFromApi();
+    setRowsCount(count);
+  };
 
   //++++++++++++++++++++++++++++++
 
   const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
+    const isAsc = orderBy === property && order === "asc";
+    setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
@@ -127,20 +148,31 @@ export default function EnhancedTable() {
     } else if (selectedIndex > 0) {
       newSelected = newSelected.concat(
         selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
+        selected.slice(selectedIndex + 1)
       );
     }
 
     setSelected(newSelected);
   };
-
+  
+  /**
+   * Sets the new value to page state and clean up rows state.
+   * @param {*} event - representing the React event
+   * @param {number} newPage - new page number
+   */
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    // It is necessary to clear the rows 
+    // for the useEffect to work correctly.
+    setRows([]);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    // It is necessary to clear the rows 
+    // for the useEffect to work correctly.
+    setRows([]);
   };
 
   const handleChangeDense = (event) => {
@@ -151,17 +183,17 @@ export default function EnhancedTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsCount) : 0;
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
+    <Box sx={{ width: "100%" }}>
+      <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={dense ? "small" : "medium"}
           >
             <EnhancedTableHead
               numSelected={selected.length}
@@ -175,7 +207,7 @@ export default function EnhancedTable() {
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.sort(getComparator(order, orderBy)).slice() */}
               {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.title);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -195,7 +227,7 @@ export default function EnhancedTable() {
                           color="primary"
                           checked={isItemSelected}
                           inputProps={{
-                            'aria-labelledby': labelId,
+                            "aria-labelledby": labelId,
                           }}
                         />
                       </TableCell>
@@ -209,8 +241,12 @@ export default function EnhancedTable() {
                       </TableCell>
                       <TableCell align="right">{row.author}</TableCell>
                       <TableCell align="right">{row.category}</TableCell>
-                      <TableCell align="right">{Priorities[row.priority]}</TableCell>
-                      <TableCell align="right">{Statuses[row.status]}</TableCell>
+                      <TableCell align="right">
+                        {Priorities[row.priority]}
+                      </TableCell>
+                      <TableCell align="right">
+                        {Statuses[row.status]}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -229,7 +265,7 @@ export default function EnhancedTable() {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={rows.length}
+          count={rowsCount}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

@@ -7,6 +7,7 @@ import CategoryService from "./category-service";
 import BookNoteDto from "../dto/book-note-dto";
 import CategoryDto from "../dto/category-dto";
 import Model from "../models/human-readable-book-model";
+import { PaginationParameters } from "../utils/paginationParameters";
 
 export default class BookNoteService {
   constructor() {
@@ -24,10 +25,22 @@ export default class BookNoteService {
     return note;
   }
 
-  async getBookNotesFromApi() {
-    let response = await this._apiService.get(this._endpoint, "");
-    let notes = response.map(ent => BookNoteDto.fromResponse(ent));
+  async getBookNotesFromApi(parameters) {
+    let response = await this._apiService.get(this._endpoint, parameters);
+    let notes = response.map((ent) => BookNoteDto.fromResponse(ent));
     return notes;
+  }
+
+  /**
+   * Counts book notes in storage
+   * @returns number of all book notes in storage as a number
+   */
+  async getBookNoteCountFromApi() {
+    let response = await this._apiService.get(
+      environment.bookNotesCountEndpoint,
+      ""
+    );
+    return response;
   }
 
   async getHumanReadableBookNoteByIdFromApi(id) {
@@ -45,9 +58,18 @@ export default class BookNoteService {
     return model;
   }
 
-  async getHumanReadableBooksFromApi() {
-    let notes = await this.getBookNotesFromApi();
-    let models = await Promise.all(notes.map(async note => await this.getHumanReadableBookNoteByIdFromApi(note.id)));
+  /**
+   * Gets book notes from storage with human readable properties
+   * @param {PaginationParameters} parameters - pagination parameters
+   * @returns {Array} The list of human readable book notes
+   */
+  async getHumanReadableBooksFromApi(parameters) {
+    let notes = await this.getBookNotesFromApi(parameters);
+    let models = await Promise.all(
+      notes.map(
+        async (note) => await this.getHumanReadableBookNoteByIdFromApi(note.id)
+      )
+    );
     return models;
   }
 

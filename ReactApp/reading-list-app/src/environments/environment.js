@@ -5,4 +5,5 @@ export const environment = {
     bookNoteEndpoint: 'BookNotes',
     bookEndpoint: 'Books',
     categoryEndpoint: 'Categories',
+    bookNotesCountEndpoint: 'BookNotesCount',
 };
