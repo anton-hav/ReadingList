@@ -28,8 +28,8 @@ export default function HorizontalLinearStepper(props) {
   const [authorId, setAuthorId] = React.useState("");
   const [categoryId, setCategoryId] = React.useState("");
   const [title, setTitle] = React.useState("");
-  const [priority, setPriority] = React.useState(2);
-  const [status, setStatus] = React.useState(0);
+  const [priority, setPriority] = React.useState(0);
+  const [status, setStatus] = React.useState();
   const [errorMessages, setErrorMessages] = React.useState(Array(3).fill(null));
   const [isNextAllowed, setIsNextAllowed] = React.useState(false);
   const [resultMessage, setResultMessage] = React.useState("");
@@ -47,11 +47,6 @@ export default function HorizontalLinearStepper(props) {
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    console.log(`New author: ${authorId}`);
-    console.log(`New cateory: ${categoryId}`);
-    console.log(`New title: ${title}`);
-    console.log(`New priority: ${priority}`);
-    console.log(`New status: ${status}`);
     if (activeStep < steps.length - 2) {
       setIsNextAllowed(false);
     }
@@ -63,7 +58,7 @@ export default function HorizontalLinearStepper(props) {
   };
 
   /**
-   * Handle a add book action event.
+   * Handle an add book action event.
    * Creates a new book and a new book note in a storage.
    */
   const handleAddBook = async () => {
@@ -255,7 +250,7 @@ export default function HorizontalLinearStepper(props) {
         >
           <Tooltip title="Back">
             <IconButton onClick={props.onAddBookBackClick}>
-              <ArrowBackIcon fontSize="large" />
+              <ArrowBackIcon/>
             </IconButton>
           </Tooltip>
           <Typography

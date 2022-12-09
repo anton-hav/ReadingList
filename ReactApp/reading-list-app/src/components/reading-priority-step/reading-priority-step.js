@@ -6,6 +6,10 @@ import Typography from '@mui/material/Typography';
 export default function ReadingPriorityStep(props) {  
     return (
       <Box
+      sx={{
+        marginLeft: 5, 
+        marginRight: 5, 
+        paddingTop: 2}}
       >
         <Typography component="legend">Reading priority</Typography>
         <Rating

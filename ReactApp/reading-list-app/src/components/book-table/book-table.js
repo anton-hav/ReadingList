@@ -297,12 +297,12 @@ export default function EnhancedTable(props) {
     onSelectClick, 
     onPageChange, 
     onRowsPerPageChange,
-    onChangeTableSize   
+    onChangeTableSize,
+    onEditBookClick  
   } = props;
 
   useEffect(() => {
-    let height = ref.current.clientHeight;
-    //console.log(height);
+    let height = ref.current.clientHeight;    
     onChangeTableSize(height);
   });
 
@@ -327,6 +327,7 @@ export default function EnhancedTable(props) {
           numSelected={selected.length}
           onAddBookClick={onAddBookClick}
           onDeleteClick={onDeleteClick}
+          onEditBookClick={onEditBookClick}
         />
         <TableContainer>
           <Table
@@ -352,7 +353,7 @@ export default function EnhancedTable(props) {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => props.onSelectClick(event, row.id)}
+                      onClick={(event) => onSelectClick(event, row.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
@@ -406,8 +407,8 @@ export default function EnhancedTable(props) {
           count={props.rowsCount}
           rowsPerPage={props.rowsPerPage}
           page={props.page}
-          onPageChange={props.onPageChange}
-          onRowsPerPageChange={props.onRowsPerPageChange}
+          onPageChange={onPageChange}
+          onRowsPerPageChange={onRowsPerPageChange}
         />
       </Paper>
       <FormControlLabel

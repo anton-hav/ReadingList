@@ -1,8 +1,9 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
 
 import EnhancedTable from "../book-table/book-table";
 import HorizontalLinearStepper from "../add-new-book-stepper/add-new-book-stepper";
+import EditBookForm from "../edit-book/edit-book";
 
 import "./cube.scss";
 
@@ -15,8 +16,7 @@ export default function Cube(props) {
   const [currentClass, setCurrentClass] = React.useState("cube show-front");
   const [isAddBookFormActive, setIsAddBookFormActive] = React.useState(false);
   const [tableHeight, setTableHeight] = React.useState();
-
-  
+  const [isEditBookFormActive, setIsEditBookFormActive] = React.useState(false);
 
   useEffect(() => {
     // ++++++++++++++++++++++++++++++
@@ -29,8 +29,6 @@ export default function Cube(props) {
     if (rows.length === 0) {
       setDataToRows();
     }
-
-
 
     // ++++++++++++++++++++++++++++++
   });
@@ -72,7 +70,7 @@ export default function Cube(props) {
   /**
    * Sets the new value to order and orderBy states
    * and clean up table data to default.
-   * @param {*} event - representing the React event
+   * @param {Event} event - representing the React event
    * @param {string} property - new order property value
    */
   const handleRequestSort = (event, property) => {
@@ -83,6 +81,13 @@ export default function Cube(props) {
     updatePageData();
   };
 
+  /**
+   * Handles the click on select all button on table toolbar.
+   * Gets ids of rows on the current page and sets it to the selected state.
+   * If the selected contains some value, clear the selected.
+   * @param {Event} event - representing the React event
+   * @returns
+   */
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
       const newSelected = rows.map((n) => n.id);
@@ -92,6 +97,12 @@ export default function Cube(props) {
     setSelected([]);
   };
 
+  /**
+   * Handles the click on table rows.
+   * Gets the id of the selected row and set to selected state.
+   * @param {*} event - representing the React event
+   * @param {*} id - unique identifier of the selected row
+   */
   const handleClick = (event, id) => {
     const selectedIndex = selected.indexOf(id);
     let newSelected = [];
@@ -164,10 +175,26 @@ export default function Cube(props) {
     setRows([]);
   }
 
+  /**
+   * Handle change book table height.
+   * Gets the height of the table and sets new value to the height state.
+   * @param {number} height - new height value
+   */
   const handleChangeHeight = (height) => {
     setTableHeight(height);
-    console.log(height);
-  }
+  };
+
+  /**
+   * Turns the cube to the left shows (creates) edit book form.
+   */
+  const handleEditBookClick = () => {
+    setIsEditBookFormActive(true);
+    changeCubeSide("left");
+  };
+
+  const handleEditBookBackClick = () => {
+    changeCubeSide("front");
+  };
 
   // ++++++++++++++++++++++++++++++++
 
@@ -200,7 +227,7 @@ export default function Cube(props) {
   };
 
   /**
-   * Turns the cube to the right add shows (creates) book form.
+   * Turns the cube to the right shows (creates) add book form.
    */
   const handleAddBookClick = () => {
     setIsAddBookFormActive(true);
@@ -223,7 +250,7 @@ export default function Cube(props) {
               onAddBookClick={handleAddBookClick}
               page={page}
               rowsPerPage={rowsPerPage}
-              rows = {rows}
+              rows={rows}
               rowsCount={rowsCount}
               selected={selected}
               order={order}
@@ -234,16 +261,25 @@ export default function Cube(props) {
               onSelectClick={handleClick}
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
-              onChangeTableSize = {(height) => handleChangeHeight(height)}
+              onChangeTableSize={(height) => handleChangeHeight(height)}
+              onEditBookClick={handleEditBookClick}
             />
           </Box>
-          <Box className="cube__face cube__face--left">left</Box>
+          <Box className="cube__face cube__face--left">
+            {isEditBookFormActive ? (
+              <EditBookForm
+                bookId={selected[0]}
+                tableHeight={tableHeight}
+                onEditBookBackClick={handleEditBookBackClick}
+              />
+            ) : null}
+          </Box>
           <Box className="cube__face cube__face--right">
             {isAddBookFormActive ? (
               <HorizontalLinearStepper
                 onAddBookBackClick={handleAddBookBackClick}
                 onAddBookClick={handleCloseAddBookStepper}
-                tableHeight = {tableHeight}
+                tableHeight={tableHeight}
               />
             ) : null}
           </Box>

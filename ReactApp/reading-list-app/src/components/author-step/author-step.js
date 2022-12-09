@@ -65,7 +65,7 @@ export default function AuthorStep(props) {
     });    
   
     return (
-      <Box sx={{ minWidth: 120 }}>
+      <Box sx={{ minWidth: 120, marginLeft: 5, marginRight: 5, paddingTop: 2 }}>
         <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">Author</InputLabel>
           <Select

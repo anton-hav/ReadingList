@@ -9,7 +9,10 @@ export default function BookTitleStep(props) {
     <Box
       sx={{
         display: 'flex',
-        flexDirection: 'column',}}
+        flexDirection: 'column',
+        marginLeft: 5, 
+        marginRight: 5, 
+        paddingTop: 2}}
       component="form"
       
       noValidate
