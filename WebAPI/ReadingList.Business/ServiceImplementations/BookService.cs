@@ -45,7 +45,8 @@ public class BookService : IBookService
     /// <inheritdoc />
     public async Task<IEnumerable<BookDto>> GetBooksBySearchParametersAsync(string? title, 
         Guid? authorId, 
-        Guid? categoryId, 
+        Guid? categoryId,
+        Guid? bookNoteId,
         int pageNumber, 
         int pageSize)
     {
@@ -59,6 +60,9 @@ public class BookService : IBookService
 
         if (categoryId != null && !Guid.Empty.Equals(categoryId))
             entities = entities.Where(entity => entity.CategoryId.Equals(categoryId));
+
+        if (bookNoteId != null && !Guid.Empty.Equals(bookNoteId))
+            entities = entities.Where(entity => entity.BookNote.Id.Equals(bookNoteId));
 
         var result = (await entities
                 .Skip(pageSize * pageNumber)

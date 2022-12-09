@@ -21,6 +21,11 @@ public class GetBooksRequestModel
     public Guid? CategoryId { get; set; }
 
     /// <summary>
+    /// Search parameter representing the book unique identifier
+    /// </summary>
+    public Guid? BookNoteId { get; set; }
+
+    /// <summary>
     /// Search parameter representing the number of books on the page
     /// </summary>
     public int PageSize { get; set; }

@@ -189,7 +189,7 @@ public class BookNoteService : IBookNoteService
     public async Task<int> DeleteAsync(Guid id)
     {
         var entity = await _unitOfWork.BookNotes.GetByIdAsync(id);
-
+        
         if (entity != null)
         {
             _unitOfWork.BookNotes.Remove(entity);

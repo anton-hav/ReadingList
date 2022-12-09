@@ -75,7 +75,8 @@ namespace ReadingList.WebAPI.Controllers
                 var books = await _bookService
                     .GetBooksBySearchParametersAsync(model.Title, 
                         model.AuthorId, 
-                        model.CategoryId, 
+                        model.CategoryId,
+                        model.BookNoteId,
                         model.PageNumber, 
                         model.PageSize);
                 var response = _mapper.Map<IEnumerable<GetBookResponseModel>>(books);
