@@ -239,7 +239,7 @@ export default function HorizontalLinearStepper(props) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", minHeight: 455, mb: 2,  }}>
+      <Paper sx={{ width: "100%", minHeight: (props.tableHeight - 54) /*455*/, mb: 2,  }}>
         <Toolbar
           sx={{
             pl: { sm: 2 },
