@@ -8,6 +8,7 @@ import BookNoteDto from "../dto/book-note-dto";
 import CategoryDto from "../dto/category-dto";
 import Model from "../models/human-readable-book-model";
 import { PaginationParameters } from "../utils/paginationParameters";
+import Logger from "../utils/logger";
 
 export default class BookNoteService {
   constructor() {
@@ -16,6 +17,7 @@ export default class BookNoteService {
     this._bookService = new BookService();
     this._authorService = new AuthorService();
     this._categoryService = new CategoryService();
+    this._logger = new Logger();
   }
 
   // READ
@@ -84,8 +86,48 @@ export default class BookNoteService {
   }
 
   // CREATE
+  /**
+   * Creates a new book note in storage via api
+   * @param {BookNoteDto} bookNote - book note to be created
+   * @returns created book as a BookNoteDto
+   */
   async createNewBookNote(bookNote) {
-    let result = await this._apiService.post(this._endpoint, bookNote);
-    return result;
+    try {
+      let response = await this._apiService.post(this._endpoint, bookNote);
+
+      if (response !== undefined) {
+        let note = BookNoteDto.fromResponse(response);
+        return note;
+      }
+      throw new Error("Failed to create book note.");
+    } catch (error) {
+      this._logger.error(error.message);
+    }    
+  }
+
+  // DELETE
+
+  /**
+   * Deletes the book note with the specified identifier
+   * @param {*} bookNoteId - a book note unique identifier
+   */
+  async deleteBookNoteByIdViaApi(bookNoteId) {
+    try {
+      await this._apiService.delete(this._endpoint, bookNoteId);
+    } catch (error) {
+      this._logger.warn(error.message);
+    }    
+  }
+
+  /**
+   * Deletes book notes and their corresponding books from the storage
+   * @param {Array} bookNoteIds - a list of book note unique identifiers
+   */
+  async deleteBookNotes(bookNoteIds){
+    for (const id of bookNoteIds) {
+      let book = await this._bookService.getBookByBookNoteIdFromApi(id);
+      await this.deleteBookNoteByIdViaApi(id);
+      await this._bookService.deleteBookByIdViaApi(book.id);
+    }    
   }
 }

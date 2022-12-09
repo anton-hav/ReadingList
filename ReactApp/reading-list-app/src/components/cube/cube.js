@@ -9,13 +9,10 @@ import "./cube.scss";
 export default function Cube(props) {
   const [currentClass, setCurrentClass] = React.useState("cube show-front");
   const [isAddBookFormActive, setIsAddBookFormActive] = React.useState(false);
-  //const [height, setHeight] = React.useState("800px");
-  //const [width, setWidth] = React.useState("800px");
+
 
   useEffect(() => {
-    //const root = document.documentElement;
-    //root?.style.setProperty("cube--width", height);
-    //root?.style.setProperty("cube--height", width);
+
   });
 
   function changeCubeSide(value) {
@@ -62,17 +59,9 @@ export default function Cube(props) {
     <div>
       <Box
         className="scene"
-        // sx={{
-        //   width: width,
-        //   height: height,
-        // }}
       >
         <Box
           className={currentClass}
-        //   sx={{
-        //     width: width,
-        //     height: height,
-        //   }}
         >
           <Box className="cube__face cube__face--front">
             <EnhancedTable onAddBookClick = {handleAddBookClick}/>            

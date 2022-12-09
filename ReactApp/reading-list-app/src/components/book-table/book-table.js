@@ -1,5 +1,4 @@
-//import * as React from 'react';
-import React, { useEffect, /*useRef, useLayoutEffect*/ } from "react";
+import React, { useEffect} from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -20,63 +19,8 @@ import BookNoteService from "../../services/book-notes-service";
 import Priorities from "../../utils/priorities-list";
 import Statuses from "../../utils/statuses-list";
 import PaginationParameters from "../../utils/paginationParameters";
-//import { height } from "@mui/system";
 
 let _bookNoteService = new BookNoteService();
-
-// const rows = [
-//   createData('Cupcake', 'Terry Pratchett', 'category one', 0, 1),
-//   createData('Donut', 'Dan Abnett', 'category one', 1, 2),
-//   createData('Eclair', 'Terry Pratchett', 'category one', 2, 3),
-//   createData('Frozen yoghurt', 'Dan Abnett', 'category one', 3, 0),
-//   createData('Gingerbread', 'Terry Pratchett', 'category one', 4, 1),
-//   createData('Honeycomb', 'Dan Abnett', 'category one', 5, 2),
-//   createData('Ice cream sandwich', 'Terry Pratchett', 'category one', 0, 3),
-//   createData('Jelly Bean', 'Dan Abnett', 'category two', 1, 0),
-//   createData('This method is created for cross-browser compatibility', 'Terry Pratchett', 'category two', 2, 1),
-//   createData('Lollipop', 'Dan Abnett', 'category two', 3, 2),
-//   createData('Marshmallow', 'Terry Pratchett', 'category two', 4, 3),
-//   createData('Nougat', 'Dan Abnett', 'category two', 5, 0),
-//   createData('Oreo', 'Terry Pratchett', 'category two', 0, 2),
-// ];
-
-//+++++++++++++++++++++++++++++++++
-async function testGetBook() {
-  let id = "8f76306f-e942-40da-a958-100f32b301a8";
-  let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(id);
-  return note;
-}
-//+++++++++++++++++++++++++++++++++
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// This method is created for cross-browser compatibility, if you don't
-// need to support IE11, you can use Array.prototype.sort() directly
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
 
 export default function EnhancedTable(props) {
   const [order, setOrder] = React.useState("asc");
@@ -86,32 +30,18 @@ export default function EnhancedTable(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
-  const [rowsCount, setRowsCount] = React.useState(0); 
-  //const ref = useRef(null);
+  const [rowsCount, setRowsCount] = React.useState(0);
 
-  //++++++++++++++++++++++++++++++
   useEffect(() => {
     async function setDataToRows() {
-      //const data = await _bookNoteService.getHumanReadableBooksFromApi();
-      //setRows(data);
       updateRowsCount();
       updateRowsData();
     }
-
-    //let height = ref.current.clientHeight;
-    //let width = ref.current.clientWidth;
-    //props.onInit((height, width) => height, width);
-    
-    //handleSizeChange(height, width);
 
     if (rows.length === 0) {
       setDataToRows();
     }
   });
-
-  //useLayoutEffect(() => props.onInit(height, width));
-  //const handleSizeChange = (height, width) => props.onInit(height, width);
-  
 
   /**
    * Sets the human readable book notes specified pagination parameters from the api to rows.
@@ -137,8 +67,6 @@ export default function EnhancedTable(props) {
     setRowsCount(count);
   };
 
-  //++++++++++++++++++++++++++++++
-
   /**
    * Sets the new value to order and orderBy states
    * and clean up table data to default.
@@ -150,26 +78,24 @@ export default function EnhancedTable(props) {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
     setPage(0);
-    // It is necessary to clear the rows
-    // for the useEffect to work correctly.
-    setRows([]);
+    updatePageData();
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.title);
+      const newSelected = rows.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, title) => {
-    const selectedIndex = selected.indexOf(title);
+  const handleClick = (event, id) => {
+    const selectedIndex = selected.indexOf(id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, title);
+      newSelected = newSelected.concat(selected, id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -191,24 +117,56 @@ export default function EnhancedTable(props) {
    */
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    // It is necessary to clear the rows
-    // for the useEffect to work correctly.
-    setRows([]);
+    updatePageData();
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(0);    
+    updatePageData();
+  };
+
+  /**
+   * Deletes the selected rows
+   */
+  const handleDeleteClick = async () => {
+    console.log("Deleting selected rows");
+    if (selected.length > 0) {
+      let bookNoteIds = selected.slice();
+      await _bookNoteService.deleteBookNotes(bookNoteIds);
+    }
+    changePageNumberAfterDeletion();
+    updatePageData();
+    setSelected([]);
+  };
+
+  /**
+   * Changes the page number after deletion.
+   */
+  function changePageNumberAfterDeletion() {
+    let count = rowsCount - selected.length;
+    if (page > 0) {
+      if ((page) * rowsPerPage >= count) {
+        let newPage = page - 1;
+        setPage(newPage);
+      }
+    }    
+  }
+
+  /**
+   * Resets the rows in the table.
+   */
+  function updatePageData() {
     // It is necessary to clear the rows
     // for the useEffect to work correctly.
     setRows([]);
-  };
+  }
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
 
-  const isSelected = (title) => selected.indexOf(title) !== -1;
+  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -217,7 +175,11 @@ export default function EnhancedTable(props) {
   return (
     <Box sx={{ width: "100%" }} /*ref={ref}*/>
       <Paper sx={{ width: "100%", minHeight: 455, mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} onAddBookClick={props.onAddBookClick} />
+        <EnhancedTableToolbar
+          numSelected={selected.length}
+          onAddBookClick={props.onAddBookClick}
+          onDeleteClick={handleDeleteClick}
+        />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -233,23 +195,20 @@ export default function EnhancedTable(props) {
               rowCount={rows.length}
             />
             <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.sort(getComparator(order, orderBy)).slice() */}
+
               {
-                //stableSort(rows, getComparator(order, orderBy))
-                //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 rows.map((row, index) => {
-                  const isItemSelected = isSelected(row.title);
+                  const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.title)}
+                      onClick={(event) => handleClick(event, row.id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.title}
+                      key={row.id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

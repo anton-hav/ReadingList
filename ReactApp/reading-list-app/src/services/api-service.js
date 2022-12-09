@@ -41,5 +41,15 @@ export default class ApiService {
 
   patch() {}
 
-  delete() {}
+  async delete(url, id) {
+    let fullUrl = new URL(`${this._getFullUrl(url)}/${id}`);
+
+    let response = await fetch(fullUrl, {
+      method: "DELETE",
+    });
+    if (response.ok)
+      return true;
+    
+    throw new Error("Failed to delete");    
+  }
 }

@@ -21,85 +21,7 @@ import BookSummaryStep from "../book-summary-step/book-summary-step";
 
 import BookService from "../../services/book-service";
 import BookNoteService from "../../services/book-notes-service";
-
-// export default function HorizontalLinearStepper() {
-//   const [activeStep, setActiveStep] = React.useState(0);
-//   const [skipped, setSkipped] = React.useState(new Set());
-
-//   let stepComponent;
-
-//   if (activeStep === 0){
-//     stepComponent = <CategoryStep/>;
-//   } else if (activeStep === 1) {
-//     stepComponent = <AuthorStep/>;
-//   } else {
-//   }
-
-//   const handleNext = () => {
-//     let newSkipped = skipped;
-
-//     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-//     setSkipped(newSkipped);
-//   };
-
-//   const handleBack = () => {
-//     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-//   };
-
-//   const handleReset = () => {
-//     setActiveStep(0);
-//   };
-
-//   return (
-//     <Box sx={{ width: '100%' }}>
-//       <Stepper activeStep={activeStep}>
-//         {steps.map((label, index) => {
-//           const stepProps = {};
-//           const labelProps = {};
-
-//           return (
-//             <Step key={label} {...stepProps}>
-//               <StepLabel {...labelProps}>{label}</StepLabel>
-//             </Step>
-//           );
-//         })}
-//       </Stepper>
-
-//       {activeStep === steps.length ? (
-//         <React.Fragment>
-//           <Typography sx={{ mt: 2, mb: 1 }}>
-//             All steps completed - you&apos;re finished
-//           </Typography>
-//           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-//             <Box sx={{ flex: '1 1 auto' }} />
-//             <Button onClick={handleReset}>Reset</Button>
-//           </Box>
-//         </React.Fragment>
-//       ) : (
-//         <React.Fragment>
-//           <Typography component={'span'} variant={'body2'} sx={{ mt: 2, mb: 1 }}>
-//           Step {activeStep + 1}
-//           {stepComponent}
-//           </Typography>
-//           <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-//             <Button
-//               color="inherit"
-//               disabled={activeStep === 0}
-//               onClick={handleBack}
-//               sx={{ mr: 1 }}
-//             >
-//               Back
-//             </Button>
-//             <Box sx={{ flex: '1 1 auto' }} />
-//             <Button onClick={handleNext}>
-//               {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
-//             </Button>
-//           </Box>
-//         </React.Fragment>
-//       )}
-//     </Box>
-//   );
-// }
+import BookNoteDto from "../../dto/book-note-dto";
 
 export default function HorizontalLinearStepper(props) {
   const [activeStep, setActiveStep] = React.useState(0);
@@ -140,6 +62,10 @@ export default function HorizontalLinearStepper(props) {
     setIsNextAllowed(true);
   };
 
+  /**
+   * Handle a add book action event.
+   * Creates a new book and a new book note in a storage.
+   */
   const handleAddBook = async () => {
     let message = "";
 
@@ -152,14 +78,11 @@ export default function HorizontalLinearStepper(props) {
     let bookResult = await _bookService.createNewBook(book);
 
     if (bookResult.id !== undefined) {
-      let bookNote = {
-        bookId: bookResult.id,
-        priority: priority,
-        status: status,
-      };
-      let noteResult = await _bookNoteService.createNewBookNote(bookNote);
+      let bookNote = new BookNoteDto ("", bookResult.id, priority, status);
 
-      if (noteResult.id !== undefined) {
+      let result = await _bookNoteService.createNewBookNote(bookNote);
+
+      if (result.id !== undefined) {
         message = "The new book was successfully added.";
       } else {
         message = "Something went wrong. Please try again later.";

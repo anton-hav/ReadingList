@@ -6,13 +6,19 @@ import CategoryDto from "../dto/category-dto";
 
 export default class HumanReadableBookModel {
   static _logger = Logger.getInstance();
+  /**
+   * @property {string} id - Unique identifier.
+   * It equals the unique identifier of the book notes in the storage.
+   */
+  id = "";
   title = "";
   author = "";
   category = "";
   priority = null;
   status = null;
 
-  constructor(title, author, category, priority, status) {
+  constructor(id, title, author, category, priority, status) {
+    this.id = id;
     this.title = title;
     this.author = author;
     this.category = category;
@@ -35,6 +41,7 @@ export default class HumanReadableBookModel {
         throw new Error("Invalid category DTO");
       }
       return new HumanReadableBookModel(
+        bookNoteDto.id,
         bookDto.title,
         authorDto.fullName,
         categoryDto.name,
