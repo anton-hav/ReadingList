@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 export function EnhancedTableToolbar(props) {
   const { numSelected } = props;
@@ -49,9 +49,9 @@ export function EnhancedTableToolbar(props) {
           </IconButton>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
+        <Tooltip title="Add new book">
+          <IconButton onClick={props.onAddBookClick}>
+            <AddCircleOutlineIcon fontSize='large'/>
           </IconButton>
         </Tooltip>
       )}

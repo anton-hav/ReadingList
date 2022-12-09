@@ -1,0 +1,110 @@
+/*It is testing zone*/
+@use "sass:math";
+
+$cube--width: 800px;
+$cube--height: 600px;
+
+// * { box-sizing: border-box; }
+
+// body { font-family: sans-serif; }
+
+// .scene {
+//   cube--width: $cube--width;
+//   cube--height: $cube--height;
+//   /*border: 1px solid #CCC; */
+//   /* margin: 80px; */
+//   perspective: 400px;
+// }
+
+// .cube {
+//   cube--width: 200px;
+//   cube--height: 200px;
+//   position: relative;
+//   transform-style: preserve-3d;
+//   transform: translateZ(-100px);
+//   transition: transform 1s;
+// }
+
+// .cube.show-front  { transform: translateZ(-100px) rotateY(   0deg); }
+// .cube.show-right  { transform: translateZ(-100px) rotateY( -90deg); }
+// .cube.show-left   { transform: translateZ(-100px) rotateY(  90deg); }
+
+
+// .cube__face {
+//   position: absolute;
+//   cube--width: 200px;
+//   cube--height: 200px;
+//   /* border: 2px solid black; */
+//   line-cube--height: 200px;
+//   font-size: 40px;
+//   font-weight: bold;
+//   color: white;
+//   text-align: center;
+// }
+
+// .cube__face--front  { background: hsla(  0, 100%, 50%, 0.7); }
+// .cube__face--right  { background: hsla( 60, 100%, 50%, 0.7); }
+// .cube__face--left   { background: hsla(180, 100%, 50%, 0.7); }
+
+
+// .cube__face--front  { transform: rotateY(  0deg) translateZ(100px); }
+// .cube__face--right  { transform: rotateY( 90deg) translateZ(100px); }
+// .cube__face--left   { transform: rotateY(-90deg) translateZ(100px); }
+
+
+
+// label { margin-right: 10px; }
+
+
+
+
+
+
+.scene {
+  width: $cube--width;
+  height: $cube--height;
+  /*border: 1px solid #CCC; */
+  /* margin: 80px; */
+  perspective: $cube--width * 2;
+}
+
+.cube {
+  width: $cube--width;
+  height: $cube--height;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translateZ(math.div(-$cube--width, 4));
+  transition: transform 1s;  
+  
+}
+
+.cube.show-front  { transform: translateZ(math.div(-$cube--width, 2)) rotateY(   0deg); }
+.cube.show-right  { transform: translateZ(math.div(-$cube--width, 2)) rotateY( -90deg); }
+.cube.show-left   { transform: translateZ(math.div(-$cube--width, 2)) rotateY(  90deg); }
+
+
+.cube__face {
+  position: absolute;
+  width: $cube--width;
+  height: $cube--height;
+  
+  /* border: 2px solid black; */
+  // line-height: 200px;
+  // font-size: 40px;
+  // font-weight: bold;
+  // color: white;
+  // text-align: center;
+}
+
+// .cube__face--front  { background: hsla(  0, 100%, 50%, 0.7); }
+// .cube__face--right  { background: hsla( 60, 100%, 50%, 0.7); }
+// .cube__face--left   { background: hsla(180, 100%, 50%, 0.7); }
+
+
+.cube__face--front  { transform: rotateY(  0deg) translateZ(math.div($cube--width, 2)); }
+.cube__face--right  { transform: rotateY( 90deg) translateZ(math.div($cube--width, 2)); }
+.cube__face--left   { transform: rotateY(-90deg) translateZ(math.div($cube--width, 2)); }
+
+
+
+label { margin-right: 10px; }

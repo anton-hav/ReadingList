@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import AddNewBookButton from './components/add-new-book-button/add-new-book-button'
 import HorizontalLinearStepper from './components/add-new-book-stepper/add-new-book-stepper'
 import EnhancedTable from './components/book-table/book-table'
+import Cube from './components/cube/cube'
 
 import './App.css';
 
@@ -32,17 +33,17 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isAddBookFormActive: false,
-    }
+    //this.state = {
+    //  isAddBookFormActive: false,
+    //}
 
-    this.handleActivateAddBookForm = this._handleActivateAddBookForm.bind(this);
+    //this.handleActivateAddBookForm = this._handleActivateAddBookForm.bind(this);
     //this.handleCloseAddBookStepper = this._handleCloseAddBookStepper.bind(this);
   }
 
-  handleCloseAddBookStepper = () => {
-    this.setState({isAddBookFormActive: false});
-  }
+  //handleCloseAddBookStepper = () => {
+  //  this.setState({isAddBookFormActive: false});
+  //}
 
   render() {
     return (
@@ -62,20 +63,21 @@ class App extends Component {
                   pacing={2} 
                   className="app-grid" 
                   >
-                    <Grid item xs={6}>    
+                    {/* <Grid item xs={6}>    
                     {this.state.isAddBookFormActive ? null : <AddNewBookButton onClick={this.handleActivateAddBookForm}/>}            
                                                      
                     </Grid>
                     <Grid item xs={5}>
                     {this.state.isAddBookFormActive ? <HorizontalLinearStepper onClick={this.handleCloseAddBookStepper}/> : <div></div>}                
                                                      
-                    </Grid>
+                    </Grid> */}
                     <Grid item xs={10} className="grid-item-book-table">                                  
-                      <EnhancedTable/>                               
+                      {/* <EnhancedTable/> */}
+                      <Cube/>                               
                     </Grid>
-                </Grid>
+                </Grid>                
             </Container>                 
-            </main>
+            </main>            
         </div>
     )
   }

@@ -39,7 +39,7 @@ export default function BookSummaryStep(props) {
     });    
 
   return (
-    <Card sx={{ minWidth: 275 }}>
+    <Card sx={{ minWidth: 275, margin: 2  }}>
       <CardContent>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
           Book summary

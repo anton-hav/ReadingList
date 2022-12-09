@@ -1,5 +1,5 @@
 //import * as React from 'react';
-import React, { useEffect } from "react";
+import React, { useEffect, /*useRef, useLayoutEffect*/ } from "react";
 import Box from "@mui/material/Box";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -20,6 +20,7 @@ import BookNoteService from "../../services/book-notes-service";
 import Priorities from "../../utils/priorities-list";
 import Statuses from "../../utils/statuses-list";
 import PaginationParameters from "../../utils/paginationParameters";
+//import { height } from "@mui/system";
 
 let _bookNoteService = new BookNoteService();
 
@@ -77,15 +78,16 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function EnhancedTable() {
+export default function EnhancedTable(props) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("author");
-  const [selected, setSelected] = React.useState([]);  
+  const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
-  const [rowsCount, setRowsCount] = React.useState(0);
+  const [rowsCount, setRowsCount] = React.useState(0); 
+  //const ref = useRef(null);
 
   //++++++++++++++++++++++++++++++
   useEffect(() => {
@@ -93,20 +95,37 @@ export default function EnhancedTable() {
       //const data = await _bookNoteService.getHumanReadableBooksFromApi();
       //setRows(data);
       updateRowsCount();
-      updateRowsData();      
+      updateRowsData();
     }
+
+    //let height = ref.current.clientHeight;
+    //let width = ref.current.clientWidth;
+    //props.onInit((height, width) => height, width);
+    
+    //handleSizeChange(height, width);
 
     if (rows.length === 0) {
       setDataToRows();
     }
   });
 
+  //useLayoutEffect(() => props.onInit(height, width));
+  //const handleSizeChange = (height, width) => props.onInit(height, width);
+  
+
   /**
    * Sets the human readable book notes specified pagination parameters from the api to rows.
    */
   async function updateRowsData() {
-    let parameters = new PaginationParameters(rowsPerPage, page, orderBy, order);
-    const data = await _bookNoteService.getHumanReadableBooksFromApi(parameters);
+    let parameters = new PaginationParameters(
+      rowsPerPage,
+      page,
+      orderBy,
+      order
+    );
+    const data = await _bookNoteService.getHumanReadableBooksFromApi(
+      parameters
+    );
     setRows(data);
   }
 
@@ -121,17 +140,17 @@ export default function EnhancedTable() {
   //++++++++++++++++++++++++++++++
 
   /**
-   * Sets the new value to order and orderBy states 
+   * Sets the new value to order and orderBy states
    * and clean up table data to default.
    * @param {*} event - representing the React event
-   * @param {string} property - new order property value 
+   * @param {string} property - new order property value
    */
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
     setPage(0);
-    // It is necessary to clear the rows 
+    // It is necessary to clear the rows
     // for the useEffect to work correctly.
     setRows([]);
   };
@@ -164,7 +183,7 @@ export default function EnhancedTable() {
 
     setSelected(newSelected);
   };
-  
+
   /**
    * Sets the new value to page state and clean up rows state.
    * @param {*} event - representing the React event
@@ -172,7 +191,7 @@ export default function EnhancedTable() {
    */
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    // It is necessary to clear the rows 
+    // It is necessary to clear the rows
     // for the useEffect to work correctly.
     setRows([]);
   };
@@ -180,7 +199,7 @@ export default function EnhancedTable() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-    // It is necessary to clear the rows 
+    // It is necessary to clear the rows
     // for the useEffect to work correctly.
     setRows([]);
   };
@@ -196,9 +215,9 @@ export default function EnhancedTable() {
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rowsCount) : 0;
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+    <Box sx={{ width: "100%" }} /*ref={ref}*/>
+      <Paper sx={{ width: "100%", minHeight: 455, mb: 2 }}>
+        <EnhancedTableToolbar numSelected={selected.length} onAddBookClick={props.onAddBookClick} />
         <TableContainer>
           <Table
             sx={{ minWidth: 750 }}
@@ -216,7 +235,8 @@ export default function EnhancedTable() {
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.sort(getComparator(order, orderBy)).slice() */}
-              {//stableSort(rows, getComparator(order, orderBy))
+              {
+                //stableSort(rows, getComparator(order, orderBy))
                 //.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 rows.map((row, index) => {
                   const isItemSelected = isSelected(row.title);
@@ -259,7 +279,8 @@ export default function EnhancedTable() {
                       </TableCell>
                     </TableRow>
                   );
-                })}
+                })
+              }
               {emptyRows > 0 && (
                 <TableRow
                   style={{
