@@ -39,7 +39,18 @@ export default class ApiService {
 
   put() {}
 
-  patch() {}
+  async patch(url, data, id) {
+    let fullUrl = new URL(`${this._getFullUrl(url)}/${id}`);
+
+    let response = await fetch(fullUrl, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  }
 
   async delete(url, id) {
     let fullUrl = new URL(`${this._getFullUrl(url)}/${id}`);

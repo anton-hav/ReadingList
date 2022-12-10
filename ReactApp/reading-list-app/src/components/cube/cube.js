@@ -94,6 +94,7 @@ export default function Cube(props) {
       setSelected(newSelected);
       return;
     }
+    setIsEditBookFormActive(false);
     setSelected([]);
   };
 
@@ -119,7 +120,7 @@ export default function Cube(props) {
         selected.slice(selectedIndex + 1)
       );
     }
-
+    setIsEditBookFormActive(false);
     setSelected(newSelected);
   };
 
@@ -142,8 +143,8 @@ export default function Cube(props) {
   /**
    * Deletes the selected rows
    */
-  const handleDeleteClick = async () => {
-    console.log("Deleting selected rows");
+  const handleDeleteClick = async () => {    
+    setIsEditBookFormActive(false);
     if (selected.length > 0) {
       let bookNoteIds = selected.slice();
       await _bookNoteService.deleteBookNotes(bookNoteIds);

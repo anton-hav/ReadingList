@@ -73,7 +73,7 @@ export default function HorizontalLinearStepper(props) {
     let bookResult = await _bookService.createNewBook(book);
 
     if (bookResult.id !== undefined) {
-      let bookNote = new BookNoteDto ("", bookResult.id, priority, status);
+      let bookNote = new BookNoteDto("", bookResult.id, priority, status);
 
       let result = await _bookNoteService.createNewBookNote(bookNote);
 
@@ -234,23 +234,26 @@ export default function HorizontalLinearStepper(props) {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Paper sx={{ width: "100%", minHeight: (props.tableHeight - 54) /*455*/, mb: 2,  }}>
+      <Paper
+        sx={{
+          width: "100%",
+          minHeight: props.tableHeight - 54 /*54 - offset chosen empirically*/,
+          mb: 2,
+        }}
+      >
         <Toolbar
           sx={{
             pl: { sm: 2 },
             pr: { xs: 1, sm: 1 },
             marginBottom: 2,
             ...{
-              bgcolor: (theme) =>
-                alpha(
-                  theme.palette.primary.main,                  
-                ),
+              bgcolor: (theme) => alpha(theme.palette.primary.main),
             },
           }}
         >
           <Tooltip title="Back">
             <IconButton onClick={props.onAddBookBackClick}>
-              <ArrowBackIcon/>
+              <ArrowBackIcon />
             </IconButton>
           </Tooltip>
           <Typography

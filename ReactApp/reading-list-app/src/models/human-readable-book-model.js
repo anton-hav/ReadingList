@@ -52,4 +52,22 @@ export default class HumanReadableBookModel {
       this._logger.error(error.message);
     }
   }
+
+  static clone (book){
+    try {
+      if (!(book instanceof HumanReadableBookModel)) {
+        throw new Error("Invalid human readable book model for clone.");
+      }
+
+      let clone = new HumanReadableBookModel();
+
+      for (let key in book) {
+        clone[key] = book[key];
+      }
+      return clone;
+      
+    } catch (error) {
+      this._logger.error(error.message);
+    }
+  }
 }

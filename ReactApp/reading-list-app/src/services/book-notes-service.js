@@ -102,7 +102,32 @@ export default class BookNoteService {
       throw new Error("Failed to create book note.");
     } catch (error) {
       this._logger.error(error.message);
-    }    
+    }
+  }
+
+  // UPDATE
+
+  /**
+   * Updates a book note in storage via api.
+   * It used patching.
+   * @param {BookNoteDto} bookNote - book note to be updated
+   */
+  async updateBookNote(bookNote) {
+    try {
+      let response = await this._apiService.patch(
+        this._endpoint,
+        bookNote,
+        bookNote.id        
+      );
+
+      if (response !== undefined) {
+        let note = BookNoteDto.fromResponse(response);
+        return note;
+      }
+      throw new Error("Failed to update book note.");
+    } catch (error) {
+      this._logger.error(error.message);
+    }
   }
 
   // DELETE
@@ -116,18 +141,18 @@ export default class BookNoteService {
       await this._apiService.delete(this._endpoint, bookNoteId);
     } catch (error) {
       this._logger.warn(error.message);
-    }    
+    }
   }
 
   /**
    * Deletes book notes and their corresponding books from the storage
    * @param {Array} bookNoteIds - a list of book note unique identifiers
    */
-  async deleteBookNotes(bookNoteIds){
+  async deleteBookNotes(bookNoteIds) {
     for (const id of bookNoteIds) {
       let book = await this._bookService.getBookByBookNoteIdFromApi(id);
       await this.deleteBookNoteByIdViaApi(id);
       await this._bookService.deleteBookByIdViaApi(book.id);
-    }    
+    }
   }
 }
