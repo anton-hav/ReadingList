@@ -25,8 +25,6 @@ export default function Cube(props) {
   const [isEditBookFormActive, setIsEditBookFormActive] = React.useState(false);
 
   useEffect(() => {
-    // ++++++++++++++++++++++++++++++
-    // FROM Book Table
     async function setDataToRows() {
       updateRowsCount();
       updateRowsData();
@@ -35,8 +33,6 @@ export default function Cube(props) {
     if (rows.length === 0) {
       setDataToRows();
     }
-
-    // ++++++++++++++++++++++++++++++
   });
 
   // ++++++++++++++++++++++++++++++++
@@ -141,7 +137,8 @@ export default function Cube(props) {
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+    let newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
     setPage(0);
     updatePageData();
   };
@@ -189,7 +186,17 @@ export default function Cube(props) {
    */
   const handleChangeHeight = (height) => {
     setTableHeight(height);
+    changeSceneSize(height);
   };
+
+  /**
+   * Changes the height of the scene.
+   * @param {number} height - new height value
+   */
+  function changeSceneSize(height) {
+    const root = document.documentElement;
+    root.style.setProperty("--cube-height", height + "px");
+  }
   // END OF BOOK TABLE SECTION
   // ++++++++++++++++++++++++++++++++
 
@@ -320,53 +327,53 @@ export default function Cube(props) {
   // ++++++++++++++++++++++++++++++++
 
   return (
-    <div>
-      <Box className="scene">
-        <Box className={currentClass}>
-          <Box className="cube__face cube__face--front">
-            <EnhancedTable
-              onAddBookClick={handleAddBookClick}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              rows={rows}
-              rowsCount={rowsCount}
-              selected={selected}
-              order={order}
-              orderBy={orderBy}
-              onDeleteClick={handleDeleteClick}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              onSelectClick={handleClick}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              onChangeTableSize={(height) => handleChangeHeight(height)}
-              onEditBookClick={handleEditBookClick}
+    //<div className="scene">
+    <Box className="scene">
+      <Box className={currentClass}>
+        <Box className="cube__face cube__face--front">
+          <EnhancedTable
+            onAddBookClick={handleAddBookClick}
+            page={page}
+            rowsPerPage={rowsPerPage}
+            rows={rows}
+            rowsCount={rowsCount}
+            selected={selected}
+            order={order}
+            orderBy={orderBy}
+            onDeleteClick={handleDeleteClick}
+            onSelectAllClick={handleSelectAllClick}
+            onRequestSort={handleRequestSort}
+            onSelectClick={handleClick}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            onChangeTableSize={(height) => handleChangeHeight(height)}
+            onEditBookClick={handleEditBookClick}
+          />
+        </Box>
+        <Box className="cube__face cube__face--left">
+          {isEditBookFormActive ? (
+            <EditBookForm
+              //bookId={selected[0]}
+              tableHeight={tableHeight}
+              model={editModel}
+              onEditBookBackClick={handleEditBookBackClick}
+              onPriorityChange={(event) => handlePriorityChange(event)}
+              onSaveButtonClick={handleClickSave}
+              onStatusChange={(event) => handleStatusChange(event)}
             />
-          </Box>
-          <Box className="cube__face cube__face--left">
-            {isEditBookFormActive ? (
-              <EditBookForm
-                //bookId={selected[0]}
-                tableHeight={tableHeight}
-                model={editModel}
-                onEditBookBackClick={handleEditBookBackClick}
-                onPriorityChange={(event) => handlePriorityChange(event)}
-                onSaveButtonClick={handleClickSave}
-                onStatusChange={(event) => handleStatusChange(event)}
-              />
-            ) : null}
-          </Box>
-          <Box className="cube__face cube__face--right">
-            {isAddBookFormActive ? (
-              <HorizontalLinearStepper
-                onAddBookBackClick={handleAddBookBackClick}
-                onAddBookClick={handleCloseAddBookStepper}
-                tableHeight={tableHeight}
-              />
-            ) : null}
-          </Box>
+          ) : null}
+        </Box>
+        <Box className="cube__face cube__face--right">
+          {isAddBookFormActive ? (
+            <HorizontalLinearStepper
+              onAddBookBackClick={handleAddBookBackClick}
+              onAddBookClick={handleCloseAddBookStepper}
+              tableHeight={tableHeight}
+            />
+          ) : null}
         </Box>
       </Box>
-    </div>
+    </Box>
+    //</div>
   );
 }
