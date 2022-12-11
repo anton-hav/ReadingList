@@ -12,12 +12,12 @@ import { alpha } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
 
-import CategoryStep from "../category-step/category-step";
-import AuthorStep from "../author-step/author-step";
-import BookTitleStep from "../book-title-step/book-title-step";
-import ReadingPriorityStep from "../reading-priority-step/reading-priority-step";
-import ReadingStatusStep from "../reading-status-step/reading-status-step";
-import BookSummaryStep from "../book-summary-step/book-summary-step";
+import CategoryStep from "./category-step";
+import AuthorStep from "./author-step";
+import BookTitleStep from "./book-title-step";
+import ReadingPriorityStep from "./reading-priority-step";
+import ReadingStatusStep from "./reading-status-step";
+import BookSummaryStep from "./book-summary-step";
 
 import BookService from "../../services/book-service";
 import BookNoteService from "../../services/book-notes-service";

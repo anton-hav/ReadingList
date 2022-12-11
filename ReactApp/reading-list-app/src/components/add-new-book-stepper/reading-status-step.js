@@ -14,7 +14,7 @@ export default function ReadingStatusStep(props) {
       <FormLabel id="demo-row-radio-buttons-group-label">Reading status</FormLabel>
       <RadioGroup
         row
-        value={props.value}
+        value={props.value !== undefined ? props.value : ""}
         onChange={props.onChange}
         aria-labelledby="demo-row-radio-buttons-group-label"
         name="row-radio-buttons-group"
