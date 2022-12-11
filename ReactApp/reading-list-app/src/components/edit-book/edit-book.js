@@ -1,5 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Box from "@mui/material/Box";
+
+import Grid from "@mui/material/Unstable_Grid2";
+
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
@@ -13,63 +20,27 @@ import Toolbar from "@mui/material/Toolbar";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 
-import BookNoteService from "../../services/book-notes-service";
-import BookService from "../../services/book-service";
-
-import BookNoteDto from "../../dto/book-note-dto";
-import HumanReadableBookModel from "../../models/human-readable-book-model";
-
 import Priorities from "../../utils/priorities-list";
 import Statuses from "../../utils/statuses-list";
 
 export default function EditBookForm(props) {
-  const _bookNoteService = new BookNoteService();
-  const _bookService = new BookService();
+  const {
+    tableHeight,
+    model,
+    onEditBookBackClick,
+    onPriorityChange,
+    onSaveButtonClick,
+    onStatusChange,
+  } = props;
 
-  const { bookId, onEditBookBackClick } = props;
-  const [model, setModel] = React.useState({});
-
-  useEffect(() => {
-    async function setDataToBook() {
-      let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(
-        bookId
-      );
-      setModel(note);
-    }
-
-    if (model.id !== bookId) {
-      setDataToBook();
-    }
-  });
-
-  /**
-   * Handles change priority.
-   * Sets new priority value to the book's priority state.
-   * @param {Event} event - representing the React event
-   */
-  const handlePriorityChange = (event) => {
-    console.log(event.target.value);
-    let note = HumanReadableBookModel.clone(model);
-    note.priority = Number(event.target.value);
-    setModel(note);
-  };
-
-  /**
-   * Handles click on save button.
-   * Prepares and sends the modified book note to the storage to update the value.
-   */
-  const handleClickSave = async () => {
-    let bookId = (await _bookService.getBookByBookNoteIdFromApi(model.id)).id;
-    let note = BookNoteDto.fromHumanReadableBookModelAndBookId(model, bookId);
-    let result = await _bookNoteService.updateBookNote(note);
-  };
+  const statuses = Statuses.slice();
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper
         sx={{
           width: "100%",
-          minHeight: props.tableHeight - 54 /*54 - offset chosen empirically*/,
+          minHeight: tableHeight - 54 /*54 - offset chosen empirically*/,
           mb: 2,
         }}
       >
@@ -100,37 +71,60 @@ export default function EditBookForm(props) {
 
         <Card sx={{ minWidth: 275, margin: 2 }}>
           <CardContent>
-            <Typography
-              sx={{ fontSize: 14 }}
-              color="text.secondary"
-              gutterBottom
-            >
-              Book summary
-            </Typography>
             <Typography variant="h5" component="div">
-              {model.title}
+              "{model.title}"
             </Typography>
             <Typography sx={{ mb: 1.5 }} color="text.secondary">
               by {model.author}
             </Typography>
-            <Typography variant="body2">
-              <b>category:</b> {model.category}.
-              <br />
-              <br />
-              <b>priority:</b> {Priorities[model.priority]}.
-              <br />
-              <b>status:</b> {Statuses[model.status]}.
-            </Typography>
-            <Rating
-              name="simple-controlled"
-              value={model.priority === undefined ? 0 : model.priority}
-              size="large"
-              onChange={(event) => handlePriorityChange(event)}
-            />
+            <Grid container spacing={2}>
+              <Grid xs={6}>
+                <Paper sx={{ minHeight: 130 }} variant="outlined">
+                  <Typography sx={{ padding: 0 }} variant="body2">
+                    <h3>Set new priority</h3>
+                    <p>{Priorities[model.priority]}.</p>
+                  </Typography>
+                  <Rating
+                    name="simple-controlled"
+                    value={model.priority === undefined ? 0 : model.priority}
+                    size="large"
+                    onChange={(event) => onPriorityChange(event)}
+                  />
+                </Paper>
+              </Grid>
+              <Grid xs={6}>
+                <Paper sx={{ minHeight: 130 }} variant="outlined">
+                  <Typography sx={{ padding: 0 }} variant="body2">
+                    <h3>Set new status</h3>
+                  </Typography>
+                  <FormControl sx={{ m: 2, minWidth: 200 }} size="small">
+                    <InputLabel id="demo-simple-select-label">
+                      Status
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={model.status}
+                      label="Category"
+                      onChange={onStatusChange}
+                    >
+                      {statuses.map((item) => (
+                        <MenuItem
+                          key={statuses.indexOf(item)}
+                          value={statuses.indexOf(item)}
+                        >
+                          {item}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Paper>
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
         <Box sx={{ flex: "1 1 auto" }} />
-        <Button onClick={handleClickSave}>Save</Button>
+        <Button onClick={onSaveButtonClick}>Save</Button>
       </Paper>
     </Box>
   );

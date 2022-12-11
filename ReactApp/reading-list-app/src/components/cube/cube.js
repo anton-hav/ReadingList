@@ -7,10 +7,16 @@ import EditBookForm from "../edit-book/edit-book";
 
 import "./cube.scss";
 
+import BookService from "../../services/book-service";
+
+import BookNoteDto from "../../dto/book-note-dto";
+import HumanReadableBookModel from "../../models/human-readable-book-model";
+
 import BookNoteService from "../../services/book-notes-service";
 import PaginationParameters from "../../utils/paginationParameters";
 
-let _bookNoteService = new BookNoteService();
+const _bookNoteService = new BookNoteService();
+const _bookService = new BookService();
 
 export default function Cube(props) {
   const [currentClass, setCurrentClass] = React.useState("cube show-front");
@@ -34,7 +40,7 @@ export default function Cube(props) {
   });
 
   // ++++++++++++++++++++++++++++++++
-  // FROM Book Table
+  // BOOK TABLE SECTION
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("author");
   const [selected, setSelected] = React.useState([]);
@@ -143,7 +149,7 @@ export default function Cube(props) {
   /**
    * Deletes the selected rows
    */
-  const handleDeleteClick = async () => {    
+  const handleDeleteClick = async () => {
     setIsEditBookFormActive(false);
     if (selected.length > 0) {
       let bookNoteIds = selected.slice();
@@ -184,19 +190,84 @@ export default function Cube(props) {
   const handleChangeHeight = (height) => {
     setTableHeight(height);
   };
+  // END OF BOOK TABLE SECTION
+  // ++++++++++++++++++++++++++++++++
+
+  // ++++++++++++++++++++++++++++++++
+  // EDIT BOOK SIDE SECTION
+  const [editModel, setEditModel] = React.useState({});
+
+  /**
+   * Sets data to edit book model.
+   */
+  async function setDataForBookEdit() {
+    let bookId = selected[0];
+    let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(
+      bookId
+    );
+    setEditModel(note);
+  }
 
   /**
    * Turns the cube to the left shows (creates) edit book form.
    */
-  const handleEditBookClick = () => {
+  const handleEditBookClick = async () => {
     setIsEditBookFormActive(true);
+    let bookId = selected[0];
+    if (editModel.id !== bookId) {
+      await setDataForBookEdit();
+    }
     changeCubeSide("left");
   };
 
+  /**
+   * Handles click on back button on Edit book side.
+   * It doesn't collapses edit book component.
+   */
   const handleEditBookBackClick = () => {
     changeCubeSide("front");
   };
 
+  /**
+   * Handles change priority.
+   * Sets new priority value to the book's priority state.
+   * @param {Event} event - representing the React event
+   */
+  const handlePriorityChange = (event) => {
+    let note = HumanReadableBookModel.clone(editModel);
+    note.priority = Number(event.target.value);
+    setEditModel(note);
+  };
+
+  /**
+   * Handles change status on edit book cube side.
+   * Sets new status value to the book's status state.
+   * @param {Event} event - representing the React event
+   */
+  const handleStatusChange = (event) => {
+    let note = HumanReadableBookModel.clone(editModel);
+    note.status = event.target.value;
+    setEditModel(note);
+  };
+
+  /**
+   * Handles click on save button.
+   * Prepares and sends the modified book note to the storage to update the value.
+   */
+  const handleClickSave = async () => {
+    let bookId = (await _bookService.getBookByBookNoteIdFromApi(editModel.id))
+      .id;
+    let note = BookNoteDto.fromHumanReadableBookModelAndBookId(
+      editModel,
+      bookId
+    );
+    let result = await _bookNoteService.updateBookNote(note);
+    updatePageData();
+    changeCubeSide("front");
+    setIsEditBookFormActive(true);
+  };
+
+  // END OF EDIT BOOK SIDE SECTION
   // ++++++++++++++++++++++++++++++++
 
   function changeCubeSide(value) {
@@ -213,6 +284,9 @@ export default function Cube(props) {
     }
     setCurrentClass(showClass);
   }
+
+  // ++++++++++++++++++++++++++++++++
+  // ADD BOOK STEPPER SECTION
 
   /**
    * Turns the cube to the front and collapses add book form
@@ -242,6 +316,9 @@ export default function Cube(props) {
     changeCubeSide("front");
   };
 
+  // END OF ADD BOOK STEPPER SECTION
+  // ++++++++++++++++++++++++++++++++
+
   return (
     <div>
       <Box className="scene">
@@ -269,9 +346,13 @@ export default function Cube(props) {
           <Box className="cube__face cube__face--left">
             {isEditBookFormActive ? (
               <EditBookForm
-                bookId={selected[0]}
+                //bookId={selected[0]}
                 tableHeight={tableHeight}
+                model={editModel}
                 onEditBookBackClick={handleEditBookBackClick}
+                onPriorityChange={(event) => handlePriorityChange(event)}
+                onSaveButtonClick={handleClickSave}
+                onStatusChange={(event) => handleStatusChange(event)}
               />
             ) : null}
           </Box>
