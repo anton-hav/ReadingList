@@ -1,85 +1,93 @@
-import React, {useEffect} from "react";
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import Box from '@mui/material/Box';
+import React, { useEffect } from "react";
+import Box from "@mui/material/Box";
+// Import custom components
+import AutocompleteWithAdd from "../autocompleate-with-add/autocomplete-with-add";
+// Import services
 import CategoryService from "../../services/category-service";
+// Import data transfer objects and utils
+import CategoryDto from "../../dto/category-dto";
 
 const _categoryService = new CategoryService();
 
-// class CategoryStep extends Component {
-
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       category: '',
-//       items: [] 
-//     };
-
-//     this._categoryService = new CategoryService();
-//     (async () => this.setSelectItems())();
-//   }
-
-//   async setSelectItems(){
-//     let categories = await this._categoryService.getAllCategoriesFromApi();
-//     this.setState({items: categories.map((item) => <MenuItem key={item.id.toString()} value={item.id}>{item.name}</MenuItem>)})
-//   }  
-  
-//   handleChange (sender, event) {
-//     sender.setState({category: event.target.value});
-//   }
-  
-//   render() {
-//     return (
-//       <FormControl fullWidth>
-//         <InputLabel id="demo-simple-select-label">Category</InputLabel>
-//         <Select
-//           labelId="demo-simple-select-label"
-//           id="demo-simple-select"
-//           value={this.state.category}
-//           label="Category"
-//           onChange={(event) => this.handleChange(this, event)}
-//         >
-//           {this.state.items}
-//         </Select>
-//       </FormControl>
-//     );
-//   }  
-// }
-
-
-// export default CategoryStep;
-
-
 export default function CategoryStep(props) {
-  const [items, setItems] = React.useState([]);
+  const { categoryId, onSelect } = props;
+  const [categories, setCategories] = React.useState([]);
+  const [value, setValue] = React.useState(null);
 
   useEffect(() => {
-      async function getItems() {   
-        const data = await _categoryService.getAllCategoriesFromApi();
-        setItems(data);
-      };
+    async function setDataToCategories() {
+      const data = await _categoryService.getAllCategoriesFromApi();
+      setCategories(data);
+    }
 
-      if (items.length === 0) {
-        getItems();
+    /**
+     * Sets category specified by categoryId to state.
+     * @param {string} categoryId - category id from the parent component
+     */
+    async function setValueByCategoryId(categoryId) {
+      let category = await _categoryService.getCategoryByIdFromApi(categoryId);
+      if (category instanceof CategoryDto) {
+        setValue(category);
       }
-  });    
+    }
+
+    if (categories.length === 0) {
+      setDataToCategories();
+    }
+    if (categoryId !== undefined && value === null) {
+      setValueByCategoryId(categoryId);
+    }
+  });
+
+  /**
+   * Handeles autocomplete input field change event.
+   * Checks if category not exists and creates new category in the storage.
+   * Sets new category to value state.
+   * @param {CategoryDto} newValue - a category that the user selected in the input field
+   */
+  const handleAutocompleteChange = async (newValue) => {
+    if (newValue !== null) {
+      if (newValue.id === undefined && newValue.name !== null) {
+        let result = await createNewCategory(newValue.name);
+        newValue = result;
+      }
+      onSelect(newValue.id);
+    } else {
+      onSelect();
+    }
+    updateCategories();
+    setValue(newValue);
+  };
+
+  /**
+   * Create new category in the storage.
+   * @param {string} name - name of category to be created.
+   * @returns a created category as a CategoryDto object
+   */
+  async function createNewCategory(name) {
+    let categoryDto = new CategoryDto();
+    categoryDto.name = name;
+    let result = await _categoryService.createNewCategory(categoryDto);
+    return result;
+  }
+
+  /**
+   * Cleans categories state.
+   */
+  function updateCategories() {
+    // Needed for correctly updating
+    setCategories([]);
+  }
 
   return (
     <Box sx={{ minWidth: 120, marginLeft: 5, marginRight: 5, paddingTop: 2 }}>
-      <FormControl fullWidth>
-        <InputLabel id="demo-simple-select-label">Category</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={items.length === 0 ? '' : props.value}
-          label="Category"
-          onChange={props.onSelect}
-        >
-        {items.map((item) => <MenuItem key={item.id.toString()} value={item.id}>{item.name}</MenuItem>)}           
-        </Select>
-      </FormControl>
+      <AutocompleteWithAdd
+        model={new CategoryDto()}
+        title="Category"
+        items={categories}
+        value={value}
+        onChange={handleAutocompleteChange}
+      />
     </Box>
   );
 }

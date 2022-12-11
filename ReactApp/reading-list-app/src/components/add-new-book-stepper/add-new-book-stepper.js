@@ -11,16 +11,17 @@ import IconButton from "@mui/material/IconButton";
 import { alpha } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Toolbar from "@mui/material/Toolbar";
-
+// Import custom components
 import CategoryStep from "./category-step";
 import AuthorStep from "./author-step";
 import BookTitleStep from "./book-title-step";
 import ReadingPriorityStep from "./reading-priority-step";
 import ReadingStatusStep from "./reading-status-step";
 import BookSummaryStep from "./book-summary-step";
-
+// Import services
 import BookService from "../../services/book-service";
 import BookNoteService from "../../services/book-notes-service";
+// Import data transfer objects and utils
 import BookNoteDto from "../../dto/book-note-dto";
 
 export default function HorizontalLinearStepper(props) {
@@ -44,6 +45,44 @@ export default function HorizontalLinearStepper(props) {
     "Status",
     "Summary",
   ];
+
+  // ++++++++++++++++++++++++++++++++
+  // CATEGORY STEP SECTION
+
+  /**
+   * Handles the category select.
+   * Allows to take the next step if the categoryId is valid
+   * @param {string} categoryId - an category unique identifier
+   */
+  const handleCategorySelect = (categoryId) => {
+    setCategoryId(categoryId);
+    if (categoryId !== undefined) {
+      setIsNextAllowed(true);
+    } else {
+      setIsNextAllowed(false);
+    }
+  };
+  // END OF CATEGORY STEP SECTION
+  // ++++++++++++++++++++++++++++++++
+
+  // ++++++++++++++++++++++++++++++++
+  // AUTHOR STEP SECTION
+
+  /**
+   * Handles the author select.
+   * Allows to take the next step if the authorId is valid
+   * @param {string} authorId - an author unique identifier
+   */
+  const handleAuthorSelect = (authorId) => {
+    setAuthorId(authorId);
+    if (authorId !== undefined) {
+      setIsNextAllowed(true);
+    } else {
+      setIsNextAllowed(false);
+    }
+  };
+  // END OF AUTHOR STEP SECTION
+  // ++++++++++++++++++++++++++++++++
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -87,16 +126,6 @@ export default function HorizontalLinearStepper(props) {
     }
     setResultMessage(message);
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleAuthorSelect = (event) => {
-    setAuthorId(event.target.value);
-    setIsNextAllowed(true);
-  };
-
-  const handleCategorySelect = (event) => {
-    setCategoryId(event.target.value);
-    setIsNextAllowed(true);
   };
 
   const checkBookForExisting = async (newTitle) => {
@@ -178,15 +207,15 @@ export default function HorizontalLinearStepper(props) {
   if (activeStep === 0) {
     stepComponent = (
       <CategoryStep
-        value={categoryId}
-        onSelect={(event) => handleCategorySelect(event)}
+        categoryId={categoryId}
+        onSelect={(id) => handleCategorySelect(id)}
       />
     );
   } else if (activeStep === 1) {
     stepComponent = (
       <AuthorStep
-        value={authorId}
-        onSelect={(event) => handleAuthorSelect(event)}
+        authorId={authorId}
+        onSelect={(id) => handleAuthorSelect(id)}
       />
     );
   } else if (activeStep === 2) {

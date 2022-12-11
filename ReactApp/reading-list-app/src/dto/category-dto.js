@@ -9,5 +9,5 @@ export default class CategoryDto {
 
   static fromResponse(response) {
     return new CategoryDto(response.id, response.name);
-  }
+  }  
 }
