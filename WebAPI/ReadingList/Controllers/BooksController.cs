@@ -214,30 +214,21 @@ namespace ReadingList.WebAPI.Controllers
         {
             try
             {
-                // todo: should be rework.
+                if (id.Equals(default))
+                    throw new ArgumentNullException(nameof(id), "A non-empty Id is required.");
 
-                //if (model.Title.IsNullOrEmpty())
-                //    throw new ArgumentNullException(nameof(model), "One or more object properties are null.");
+                var isExistById = await _bookService.IsBookExistAsync(id);
+                if (!isExistById)
+                    throw new ArgumentException("Fail to find a record with the specified Id in the storage",
+                        nameof(id));
+                
+                var isValid = await CheckBookForEditAsync(id, model.Title, model.AuthorId);
+                var dto = _mapper.Map<BookDto>(model);
+                dto.Id = id;
+                var result = await _bookService.PatchAsync(id, dto);
+                var response = _mapper.Map<GetBookResponseModel>(dto);
 
-                //if (id.Equals(default))
-                //    throw new ArgumentNullException(nameof(id), "A non-empty Id is required.");
-
-                //var isExistById = await _bookService.IsBookExistAsync(id);
-                //if (!isExistById)
-                //    throw new ArgumentException("Fail to find a record with the specified Id in the storage",
-                //        nameof(id));
-
-                //var isExistByFullName = await _bookService.IsBookExistAsync(model.Title, model.AuthorId);
-                //if (isExistByFullName)
-                //    throw new ArgumentException("The same entry already exists in the storage.", nameof(model));
-
-                //var dto = _mapper.Map<BookDto>(model);
-                //dto.Id = id;
-                //var result = await _bookService.PatchAsync(id, dto);
-                //var response = _mapper.Map<GetBookResponseModel>(dto);
-
-                //return Ok(response);
-                throw new NotImplementedException();
+                return Ok(response);
             }
             catch (ArgumentNullException ex)
             {

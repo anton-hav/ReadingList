@@ -217,9 +217,7 @@ namespace ReadingList.WebAPI.Controllers
         {
             try
             {
-                //if (model.Title.IsNullOrEmpty())
-                //    throw new ArgumentNullException(nameof(model), "One or more object properties are null.");
-
+                
                 if (id.Equals(default))
                     throw new ArgumentNullException(nameof(id), "A non-empty Id is required.");
 
@@ -227,11 +225,7 @@ namespace ReadingList.WebAPI.Controllers
                 if (!isExistById)
                     throw new ArgumentException("Fail to find a record with the specified Id in the storage",
                         nameof(id));
-
-                //var isExistByFullName = await _bookNoteService.IsBookNoteExistAsync(model.Title, model.AuthorId);
-                //if (isExistByFullName)
-                //    throw new ArgumentException("The same entry already exists in the storage.", nameof(model));
-
+                
                 var isValid = await CheckBookNoteForEditAsync(id, model.BookId);
 
                 var dto = _mapper.Map<BookNoteDto>(model);
