@@ -386,3 +386,6 @@ FodyWeavers.xsd
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Visual Studio Code debugger configuration
+.vscode
