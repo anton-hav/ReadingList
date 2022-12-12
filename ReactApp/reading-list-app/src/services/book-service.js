@@ -75,6 +75,31 @@ export default class BookService {
       }    
   }
 
+    // UPDATE
+
+  /**
+   * Updates a book in storage via api.
+   * It used patching.
+   * @param {BookDto} book - book to be updated
+   */
+  async updateBook(book) {
+    try {
+      let response = await this._apiService.patch(
+        this._endpoint,
+        book,
+        book.id        
+      );
+
+      if (response !== undefined) {
+        let result = BookDto.fromResponse(response);
+        return result;
+      }
+      throw new Error("Failed to update book.");
+    } catch (error) {
+      this._logger.error(error.message);
+    }
+  }
+
   // DELETE
 
   /**

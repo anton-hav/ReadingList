@@ -1,5 +1,6 @@
 import Logger from "../utils/logger";
 import HumanReadableBookModel from "../models/human-readable-book-model";
+import EditBookModel from "../models/edit-book-model";
 
 export default class BookNoteDto {
   static _logger = Logger.getInstance();
@@ -39,6 +40,20 @@ export default class BookNoteDto {
     try {
       if (!(model instanceof HumanReadableBookModel)) {
         throw new Error("Invalid book model");
+      }
+      if (bookId === undefined) {
+        throw new Error("Invalid book id");
+      }
+      return new BookNoteDto(model.id, bookId, model.priority, model.status);
+    } catch (error) {
+      this._logger.error(error.message);
+    }
+  }
+
+  static fromEditBookModelAndBookId(model, bookId) {
+    try {
+      if (!(model instanceof EditBookModel)) {
+        throw new Error("Invalid edit book model");
       }
       if (bookId === undefined) {
         throw new Error("Invalid book id");

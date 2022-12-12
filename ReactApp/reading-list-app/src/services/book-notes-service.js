@@ -9,6 +9,7 @@ import CategoryDto from "../dto/category-dto";
 import Model from "../models/human-readable-book-model";
 import { PaginationParameters } from "../utils/paginationParameters";
 import Logger from "../utils/logger";
+import EditBookModel from "../models/edit-book-model";
 
 export default class BookNoteService {
   constructor() {
@@ -57,6 +58,24 @@ export default class BookNoteService {
       bookDto.categoryId
     );
     let model = Model.FromParts(bookDto, bookNoteDto, authorDto, categoryDto);
+    return model;
+  }
+
+  /**
+   * Gets data from the storage and create new an edit book model 
+   * specified by book note unique identifier.
+   * @param {string} id - a book note unique identifier 
+   * @returns an edit book model as a EditBookModel object
+   */
+  async getEditBookModelByIdFromApi(id){
+    let bookNoteDto = await this.getBookNoteByIdFromApi(id);
+    let bookDto = await this._bookService.getBookByIdFromApi(
+      bookNoteDto.bookId
+    );
+    let authorDto = await this._authorService.getAuthorByIdFromApi(
+      bookDto.authorId
+    );    
+    let model = EditBookModel.FromParts(bookDto, bookNoteDto, authorDto);
     return model;
   }
 

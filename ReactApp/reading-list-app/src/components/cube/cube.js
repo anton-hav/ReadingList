@@ -1,28 +1,30 @@
 import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
-
+// Import custom components
 import EnhancedTable from "../book-table/book-table";
 import HorizontalLinearStepper from "../add-new-book-stepper/add-new-book-stepper";
 import EditBookForm from "../edit-book/edit-book";
-
 import "./cube.scss";
-
+// Import services
 import BookService from "../../services/book-service";
-
+import BookNoteService from "../../services/book-notes-service";
+import CategoryService from "../../services/category-service";
+// Import data transfer objects and utils
 import BookNoteDto from "../../dto/book-note-dto";
 import HumanReadableBookModel from "../../models/human-readable-book-model";
-
-import BookNoteService from "../../services/book-notes-service";
 import PaginationParameters from "../../utils/paginationParameters";
+import EditBookModel from "../../models/edit-book-model";
 
 const _bookNoteService = new BookNoteService();
 const _bookService = new BookService();
+const _categoryService = new CategoryService();
 
 export default function Cube(props) {
   const [currentClass, setCurrentClass] = React.useState("cube show-front");
   const [isAddBookFormActive, setIsAddBookFormActive] = React.useState(false);
   const [tableHeight, setTableHeight] = React.useState();
   const [isEditBookFormActive, setIsEditBookFormActive] = React.useState(false);
+  const [editModel, setEditModel] = React.useState({});
 
   useEffect(() => {
     async function setDataToRows() {
@@ -35,7 +37,7 @@ export default function Cube(props) {
     }
   });
 
-  // ++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // BOOK TABLE SECTION
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("author");
@@ -97,6 +99,7 @@ export default function Cube(props) {
       return;
     }
     setIsEditBookFormActive(false);
+    setEditModel({});
     setSelected([]);
   };
 
@@ -123,6 +126,7 @@ export default function Cube(props) {
       );
     }
     setIsEditBookFormActive(false);
+    setEditModel({});
     setSelected(newSelected);
   };
 
@@ -148,6 +152,7 @@ export default function Cube(props) {
    */
   const handleDeleteClick = async () => {
     setIsEditBookFormActive(false);
+    setEditModel({});
     if (selected.length > 0) {
       let bookNoteIds = selected.slice();
       await _bookNoteService.deleteBookNotes(bookNoteIds);
@@ -198,21 +203,19 @@ export default function Cube(props) {
     root.style.setProperty("--cube-height", height + "px");
   }
   // END OF BOOK TABLE SECTION
-  // ++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  // ++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // EDIT BOOK SIDE SECTION
-  const [editModel, setEditModel] = React.useState({});
-
   /**
    * Sets data to edit book model.
    */
   async function setDataForBookEdit() {
-    let bookId = selected[0];
-    let note = await _bookNoteService.getHumanReadableBookNoteByIdFromApi(
-      bookId
-    );
-    setEditModel(note);
+    let bookNoteId = selected[0];
+    let model = await _bookNoteService.getEditBookModelByIdFromApi(
+      bookNoteId
+    );    
+    setEditModel(model);
   }
 
   /**
@@ -241,7 +244,7 @@ export default function Cube(props) {
    * @param {Event} event - representing the React event
    */
   const handlePriorityChange = (event) => {
-    let note = HumanReadableBookModel.clone(editModel);
+    let note = EditBookModel.clone(editModel);
     note.priority = Number(event.target.value);
     setEditModel(note);
   };
@@ -252,7 +255,7 @@ export default function Cube(props) {
    * @param {Event} event - representing the React event
    */
   const handleStatusChange = (event) => {
-    let note = HumanReadableBookModel.clone(editModel);
+    let note = EditBookModel.clone(editModel);
     note.status = event.target.value;
     setEditModel(note);
   };
@@ -262,20 +265,34 @@ export default function Cube(props) {
    * Prepares and sends the modified book note to the storage to update the value.
    */
   const handleClickSave = async () => {
-    let bookId = (await _bookService.getBookByBookNoteIdFromApi(editModel.id))
-      .id;
-    let note = BookNoteDto.fromHumanReadableBookModelAndBookId(
+    let book = await _bookService.getBookByBookNoteIdFromApi(editModel.id);
+    let note = BookNoteDto.fromEditBookModelAndBookId(
       editModel,
-      bookId
+      book.id
     );
-    let result = await _bookNoteService.updateBookNote(note);
+    if (book.categoryId !== editModel.categoryId) {
+      book.categoryId = editModel.categoryId;
+      await _bookService.updateBook(book);
+    };
+    await _bookNoteService.updateBookNote(note);
+    
     updatePageData();
     changeCubeSide("front");
     setIsEditBookFormActive(true);
   };
 
+  /**
+   * Handles category select on edit book cube side.
+   * @param {string} id - new value of the categoryId
+   */
+  const handleCategorySelect = async (id) => {
+    let note = EditBookModel.clone(editModel);
+    note.categoryId = id;
+    setEditModel(note);
+  };
+
   // END OF EDIT BOOK SIDE SECTION
-  // ++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   function changeCubeSide(value) {
     let showClass = "";
@@ -292,7 +309,7 @@ export default function Cube(props) {
     setCurrentClass(showClass);
   }
 
-  // ++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // ADD BOOK STEPPER SECTION
 
   /**
@@ -324,7 +341,7 @@ export default function Cube(props) {
   };
 
   // END OF ADD BOOK STEPPER SECTION
-  // ++++++++++++++++++++++++++++++++
+  // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
   return (
     //<div className="scene">
@@ -360,6 +377,7 @@ export default function Cube(props) {
               onPriorityChange={(event) => handlePriorityChange(event)}
               onSaveButtonClick={handleClickSave}
               onStatusChange={(event) => handleStatusChange(event)}
+              onCategorySelect={(id) => handleCategorySelect(id)}
             />
           ) : null}
         </Box>
