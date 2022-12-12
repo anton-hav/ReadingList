@@ -1,0 +1,44 @@
+@use "sass:math";
+
+$cube--width: 800px;
+$cube--height: var(--cube-height);
+
+
+.scene {
+  width: $cube--width;
+  height: var(--cube-height);
+  box-sizing: content-box;
+  height: auto;
+  perspective: $cube--width * 2;
+  
+}
+
+.cube {
+  width: $cube--width;
+  height: $cube--height;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: translateZ(math.div(-$cube--width, 4));
+  transition: transform 1s;  
+  
+}
+
+.cube.show-front  { transform: translateZ(math.div(-$cube--width, 2)) rotateY(   0deg); }
+.cube.show-right  { transform: translateZ(math.div(-$cube--width, 2)) rotateY( -90deg); }
+.cube.show-left   { transform: translateZ(math.div(-$cube--width, 2)) rotateY(  90deg); }
+
+
+.cube__face {
+  position: absolute;
+  width: $cube--width;
+  height: auto;    
+}
+
+
+.cube__face--front  { transform: rotateY(  0deg) translateZ(math.div($cube--width, 2)); }
+.cube__face--right  { transform: rotateY( 90deg) translateZ(math.div($cube--width, 2)); }
+.cube__face--left   { transform: rotateY(-90deg) translateZ(math.div($cube--width, 2)); }
+
+
+
+label { margin-right: 10px; }
