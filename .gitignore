@@ -389,3 +389,4 @@ yarn-error.log*
 
 # Visual Studio Code debugger configuration
 .vscode
+/ReactApp/.vscode/launch.json
