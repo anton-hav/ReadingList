@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
+import { Typography } from "@mui/material";
 // Import custom components
 import AutocompleteWithAdd from "../autocompleate-with-add/autocomplete-with-add";
 // Import services
 import CategoryService from "../../services/category-service";
 // Import data transfer objects and utils
 import CategoryDto from "../../dto/category-dto";
+
+import "./stepper.css";
 
 const _categoryService = new CategoryService();
 
@@ -81,6 +84,11 @@ export default function CategoryStep(props) {
 
   return (
     <Box sx={{ minWidth: 120, marginLeft: 5, marginRight: 5, paddingTop: 2 }}>
+      <Typography className="step-description" variant="body2">
+        Select the desired option from those available. For a quick search,
+        start typing the category name. If the item you need is not on the list,
+        add it by selecting <b>"Add..."</b>.
+      </Typography>
       <AutocompleteWithAdd
         model={new CategoryDto()}
         title="Category"

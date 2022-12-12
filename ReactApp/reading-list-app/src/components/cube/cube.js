@@ -8,16 +8,13 @@ import "./cube.scss";
 // Import services
 import BookService from "../../services/book-service";
 import BookNoteService from "../../services/book-notes-service";
-import CategoryService from "../../services/category-service";
 // Import data transfer objects and utils
 import BookNoteDto from "../../dto/book-note-dto";
-import HumanReadableBookModel from "../../models/human-readable-book-model";
 import PaginationParameters from "../../utils/paginationParameters";
 import EditBookModel from "../../models/edit-book-model";
 
 const _bookNoteService = new BookNoteService();
 const _bookService = new BookService();
-const _categoryService = new CategoryService();
 
 export default function Cube(props) {
   const [currentClass, setCurrentClass] = React.useState("cube show-front");

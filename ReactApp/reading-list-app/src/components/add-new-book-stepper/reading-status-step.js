@@ -5,6 +5,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
+import Typography from "@mui/material/Typography";
 
 export default function ReadingStatusStep(props) {
   return (
@@ -25,6 +26,13 @@ export default function ReadingStatusStep(props) {
         <FormControlLabel value="3" control={<Radio />} label="Skipped" />
       </RadioGroup>
     </FormControl>
+    <Typography  variant="body2">
+        You will only be able to go to the next step after you have set the
+        reading status.
+        <br />
+        Do not be afraid to make a mistake! You can always go
+        back to this step or change the value later.
+      </Typography>
     </Box>
   );
 }

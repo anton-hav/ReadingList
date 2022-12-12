@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
 import Box from "@mui/material/Box";
+import { Typography } from "@mui/material";
 // Import custom components
 import AutocompleteWithAdd from "../autocompleate-with-add/autocomplete-with-add";
 // Import services
 import AuthorService from "../../services/author-service";
 // Import data transfer objects and utils
 import AuthorDto from "../../dto/author-dto";
+
+import "./stepper.css";
 
 const _authorService = new AuthorService();
 
@@ -81,6 +84,16 @@ export default function AuthorStep(props) {
 
   return (
     <Box sx={{ minWidth: 120, marginLeft: 5, marginRight: 5, paddingTop: 2 }}>
+      <Typography className="step-description" variant="body2">
+        Select the desired option from those available. For a quick search,
+        start typing the category name. If the item you need is not on the list,
+        add it by selecting <b>"Add..."</b>.
+        <br />
+        You will be able to go to the next step only after selecting one of the
+        values.
+        <br />
+        Don't be afraid to make a mistake! You can always go back to this step.
+      </Typography>
       <AutocompleteWithAdd
         model={new AuthorDto()}
         title="Author"

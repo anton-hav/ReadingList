@@ -53,7 +53,7 @@ export default function EditBookForm(props) {
           sx={{
             pl: { sm: 2 },
             pr: { xs: 1, sm: 1 },
-            marginBottom: 2,
+            marginBottom: 0,
             ...{
               bgcolor: (theme) => alpha(theme.palette.primary.main),
             },
@@ -74,7 +74,7 @@ export default function EditBookForm(props) {
           </Tooltip>
         </Toolbar>
 
-        <Card sx={{ minWidth: 275, margin: 2 }}>
+        <Card sx={{ minWidth: 275, marginLeft: 2, marginRight: 2 }}>
           <CardContent>
             <Typography variant="h5" component="div">
               "{model.title}"
@@ -91,10 +91,12 @@ export default function EditBookForm(props) {
                 />
               </Grid>
               <Grid xs={6}>
-                <Paper sx={{ minHeight: 130 }} variant="outlined">
+                <Paper sx={{ minHeight: 80 }} variant="outlined">
+                  <Typography sx={{ padding: 0 }} variant="h6">
+                    Set new priority
+                  </Typography>
                   <Typography sx={{ padding: 0 }} variant="body2">
-                    <h3>Set new priority</h3>
-                    <p>{Priorities[model.priority]}.</p>
+                    {Priorities[model.priority]}.
                   </Typography>
                   <Rating
                     name="simple-controlled"
@@ -105,11 +107,11 @@ export default function EditBookForm(props) {
                 </Paper>
               </Grid>
               <Grid xs={6}>
-                <Paper sx={{ minHeight: 130 }} variant="outlined">
-                  <Typography sx={{ padding: 0 }} variant="body2">
-                    <h3>Set new status</h3>
+                <Paper sx={{ minHeight: 80 }} variant="outlined">
+                  <Typography sx={{ padding: 0 }} variant="h6">
+                    Set new status
                   </Typography>
-                  <FormControl sx={{ m: 2, minWidth: 200 }} size="small">
+                  <FormControl sx={{ m: 1, minWidth: 200 }} size="small">
                     <InputLabel id="demo-simple-select-label">
                       Status
                     </InputLabel>

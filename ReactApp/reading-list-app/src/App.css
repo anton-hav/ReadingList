@@ -4,19 +4,25 @@
 
 .App-header {
   background-color: #dad7d7;
-  min-height: 10vh;
+  min-height: 6vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   justify-content: center;
+  text-align: left;
   font-size: calc(10px + 1.5vmin);
   
 }
 
+.app-description {
+  text-align:justify;
+}
+
+
 .app-main {
   background-color: #e6e1e1;
   margin-top: 00px;
-  min-height: 90vh;
+  min-height: 94vh;
   height: 100%;  
 }
 
