@@ -9,8 +9,7 @@ export default class ApiService {
   async get(url, data = {}) {
     let fullUrl = new URL(`${this._getFullUrl(url)}`);
     if (Object.keys(data).length > 0) {
-      fullUrl.search = new URLSearchParams(Object.entries(data)).toString();
-      //Object.keys(data).forEach(key => fullUrl.searchParams.append(key, data[key]));
+      fullUrl.search = new URLSearchParams(Object.entries(data)).toString();      
     }
 
     let response = await fetch(fullUrl);
@@ -37,7 +36,9 @@ export default class ApiService {
     return response.json();
   }
 
-  put() {}
+  put() {
+    throw new Error("Not implemented");
+  }
 
   async patch(url, data, id) {
     let fullUrl = new URL(`${this._getFullUrl(url)}/${id}`);

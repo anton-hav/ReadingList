@@ -4,7 +4,281 @@
         <name>ReadingList.WebAPI</name>
     </assembly>
     <members>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.GetCategoryById(System.Guid)">
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.GetAuthorById(System.Guid)">
+            <summary>
+            Get a author from storage with specified id.
+            </summary>
+            <param name="id">a author unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns>A author with specified Id</returns>
+            <response code="200">Returns a author corresponding to the specified identifier.</response>
+            <response code="404">Failed to find record in the database that match the specified id.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.GetAuthors">
+            <summary>
+            Get authors from storage.
+            </summary>
+            <returns>all authors</returns>
+            <response code="200">Returns all authors.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.AddAuthor(ReadingList.WebAPI.Models.Requests.AddOrUpdateAuthorRequestModel)">
+            <summary>
+            Add a new author to storage.
+            </summary>
+            <param name="model">a author</param>
+            <returns>A newly created author</returns>
+            <response code="201">Returns the newly created author</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">The same entry already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.UpdateAuthor(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateAuthorRequestModel)">
+            <summary>
+            Update or replace a author with specified Id in storage.
+            </summary>
+            <param name="id">a author unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a author used for update</param>
+            <returns>A author with specified Id.</returns>
+            <response code="200">Returns the updated author</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.PatchAuthor(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateAuthorRequestModel)">
+            <summary>
+            Patch a author with specified Id in storage.
+            </summary>
+            <param name="id">a author unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a author used for patching</param>
+            <returns>A author with specified Id.</returns>
+            <response code="200">Returns the updated author</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.DeleteAuthor(System.Guid)">
+            <summary>
+            Delete a author with specified Id from the storage.
+            </summary>
+            <param name="id">a author unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns></returns>
+            <response code="204">Successful deletion</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.CheckAuthorForEditAsync(System.Guid,System.String)">
+            <summary>
+            Validate a author model for update.
+            </summary>
+            <param name="id">a unique identifier that defines the author to be updated </param>
+            <param name="authorFullName">a author name</param>
+            <returns>A boolean</returns>
+            <exception cref="T:System.ArgumentNullException">If the id is empty.</exception>
+            <exception cref="T:System.ArgumentException">If the same entry already exists in the storage.</exception>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.AuthorsController.IsAuthorTheSameAsync(System.Guid,System.String)">
+            <summary>
+            Check if the existing author is the same.
+            </summary>
+            <remarks>
+            This check is necessary to ensure idempotent behavior of the PUT method.
+            </remarks>
+            <param name="id"></param>
+            <param name="authorFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.GetBookNoteById(System.Guid)">
+            <summary>
+            Get a book note from storage with specified id.
+            </summary>
+            <param name="id">a book note unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns>A book note with specified Id</returns>
+            <response code="200">Returns a book note corresponding to the specified identifier.</response>
+            <response code="404">Failed to find record in the database that match the specified id.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.GetBookNotes(ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel)">
+            <summary>
+            Get book notes from storage.
+            </summary>
+            <returns>all the book notes that match the search parameters</returns>
+            <param name="model">search parameters as a <see cref="T:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel"/></param>
+            <response code="200">Returns all book notes that match the search parameters.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.AddBookNote(ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel)">
+            <summary>
+            Add a new book note to storage.
+            </summary>
+            <param name="model">a bookNote</param>
+            <returns>A newly created bookNote</returns>
+            <response code="201">Returns the newly created bookNote</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">The same entry already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.UpdateBookNote(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel)">
+            <summary>
+            Update or replace a book note with specified Id in storage.
+            </summary>
+            <param name="id">a book note unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a book note used for update</param>
+            <returns>A book note with specified Id.</returns>
+            <response code="200">Returns the updated book note</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.PatchBookNote(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel)">
+            <summary>
+            Patch a bookNote with specified Id in storage.
+            </summary>
+            <param name="id">a bookNote unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a bookNote used for patching</param>
+            <returns>A bookNote with specified Id.</returns>
+            <response code="200">Returns the updated bookNote</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.DeleteBookNote(System.Guid)">
+            <summary>
+            Delete a book note with specified Id from the storage.
+            </summary>
+            <param name="id">a book note unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns></returns>
+            <response code="204">Successful deletion</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.CheckBookNoteForEditAsync(System.Guid,System.Guid)">
+            <summary>
+            Validate a book note model for update.
+            </summary>
+            <param name="id">a unique identifier that defines the bookNote to be updated </param>
+            <param name="bookId">book unique identifier</param>
+            <returns>A boolean</returns>
+            <exception cref="T:System.ArgumentNullException">If the id is empty.</exception>
+            <exception cref="T:System.ArgumentException">If the same entry already exists in the storage.</exception>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesController.IsBookNoteTheSameAsync(System.Guid,System.Guid)">
+            <summary>
+            Check if the existing book note is the same.
+            </summary>
+            <remarks>
+            This check is necessary to ensure idempotent behavior of the PUT method.
+            </remarks>
+            <param name="id">book note unique identifier</param>
+            <param name="bookId">book unique identifier</param>
+            <returns>A boolean</returns>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BookNotesCountController.GetBookNotesCount(ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel)">
+            <summary>
+            Get book notes count from storage
+            </summary>
+            <param name="model">search parameters as a <see cref="T:ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel"/></param>
+            <returns>number of book notes</returns>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.GetBookById(System.Guid)">
+            <summary>
+            Get a book from storage with specified id.
+            </summary>
+            <param name="id">a book unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns>A book with specified Id</returns>
+            <response code="200">Returns a book corresponding to the specified identifier.</response>
+            <response code="404">Failed to find record in the database that match the specified id.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.GetBooks(ReadingList.WebAPI.Models.Requests.GetBooksRequestModel)">
+            <summary>
+            Get books from storage.
+            </summary>
+            <returns>all books that match the search parameters</returns>
+            <response code="200">Returns all books that match the search parameters.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.AddBook(ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel)">
+            <summary>
+            Add a new book to storage.
+            </summary>
+            <param name="model">a book</param>
+            <returns>A newly created book</returns>
+            <response code="201">Returns the newly created book</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">The same entry already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.UpdateBook(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel)">
+            <summary>
+            Update or replace a book with specified Id in storage.
+            </summary>
+            <param name="id">a book unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a book used for update</param>
+            <returns>A book with specified Id.</returns>
+            <response code="200">Returns the updated book</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.PatchBook(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel)">
+            <summary>
+            Patch a book with specified Id in storage.
+            </summary>
+            <param name="id">a book unique identifier as a <see cref="T:System.Guid"/></param>
+            <param name="model">a book used for patching</param>
+            <returns>A book with specified Id.</returns>
+            <response code="200">Returns the updated book</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.DeleteBook(System.Guid)">
+            <summary>
+            Delete a book with specified Id from the storage.
+            </summary>
+            <param name="id">a book unique identifier as a <see cref="T:System.Guid"/></param>
+            <returns></returns>
+            <response code="204">Successful deletion</response>
+            <response code="400">Request contains null object or invalid object type</response>
+            <response code="409">Fail to find a record with the specified Id in the storage
+            or the entry with the same property already exists in the storage.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.CheckBookForEditAsync(System.Guid,System.String,System.Guid)">
+            <summary>
+            Validate a book model for update.
+            </summary>
+            <param name="id">a unique identifier that defines the book to be updated </param>
+            <param name="bookTitle">a book title</param>
+            <param name="bookAuthorId">unique identifier of the book's author</param>
+            <returns>A boolean</returns>
+            <exception cref="T:System.ArgumentNullException">If the id is empty.</exception>
+            <exception cref="T:System.ArgumentException">If the same entry already exists in the storage.</exception>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.BooksController.IsBookTheSameAsync(System.Guid,System.String,System.Guid)">
+            <summary>
+            Check if the existing book is the same.
+            </summary>
+            <remarks>
+            This check is necessary to ensure idempotent behavior of the PUT method.
+            </remarks>
+            <param name="id">book unique identifier</param>
+            <param name="bookTitle">book title</param>
+            <param name="bookAuthorId">unique identifier of the book's author</param>
+            <returns></returns>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.GetCategoryById(System.Guid)">
             <summary>
             Get a category from storage with specified id.
             </summary>
@@ -14,7 +288,15 @@
             <response code="404">Failed to find record in the database that match the specified id.</response>
             <response code="500">Unexpected error on the server side.</response>
         </member>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.AddCategory(ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.GetCategories">
+            <summary>
+            Get categories from storage.
+            </summary>
+            <returns>all categories</returns>
+            <response code="200">Returns all categories.</response>
+            <response code="500">Unexpected error on the server side.</response>
+        </member>
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.AddCategory(ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
             <summary>
             Add a new category to storage.
             </summary>
@@ -25,7 +307,7 @@
             <response code="409">The same entry already exists in the storage.</response>
             <response code="500">Unexpected error on the server side.</response>
         </member>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.UpdateCategory(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.UpdateCategory(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
             <summary>
             Update or replace a category with specified Id in storage.
             </summary>
@@ -38,7 +320,7 @@
             or the entry with the same property already exists in the storage.</response>
             <response code="500">Unexpected error on the server side.</response>
         </member>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.PatchCategory(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.PatchCategory(System.Guid,ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel)">
             <summary>
             Patch a category with specified Id in storage.
             </summary>
@@ -51,7 +333,7 @@
             or the entry with the same property already exists in the storage.</response>
             <response code="500">Unexpected error on the server side.</response>
         </member>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.DeleteCategory(System.Guid)">
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.DeleteCategory(System.Guid)">
             <summary>
             Delete a category with specified Id from the storage.
             </summary>
@@ -63,7 +345,7 @@
             or the entry with the same property already exists in the storage.</response>
             <response code="500">Unexpected error on the server side.</response>
         </member>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.CheckCategoryForEditAsync(System.Guid,System.String)">
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.CheckCategoryForEditAsync(System.Guid,System.String)">
             <summary>
             Validate a category model for update.
             </summary>
@@ -73,7 +355,7 @@
             <exception cref="T:System.ArgumentNullException">If the id is empty.</exception>
             <exception cref="T:System.ArgumentException">If the same entry already exists in the storage.</exception>
         </member>
-        <member name="M:ReadingList.WebAPI.Controllers.CategoryController.IsCategoryTheSameAsync(System.Guid,System.String)">
+        <member name="M:ReadingList.WebAPI.Controllers.CategoriesController.IsCategoryTheSameAsync(System.Guid,System.String)">
             <summary>
             Check if the existing category is the same.
             </summary>
@@ -83,6 +365,57 @@
             <param name="id"></param>
             <param name="categoryName"></param>
             <returns></returns>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.AddOrUpdateAuthorRequestModel">
+            <summary>
+            Request model to create or update author
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateAuthorRequestModel.FullName">
+            <summary>
+            Author name
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel">
+            <summary>
+            Request model to create or update book note
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel.BookId">
+            <summary>
+            Book unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel.Priority">
+            <summary>
+            Book reading priority from Never to Right Now
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookNoteRequestModel.Status">
+            <summary>
+            Book reading status
+            (Scheduled = 0, InProgress = 1, Completed = 2, Skipped = 3)
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel">
+            <summary>
+            Request model to create or update book
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel.Title">
+            <summary>
+            Book title
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel.AuthorId">
+            <summary>
+            Book author unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.AddOrUpdateBookRequestModel.CategoryId">
+            <summary>
+            Book category unique identifier
+            </summary>
         </member>
         <member name="T:ReadingList.WebAPI.Models.Requests.AddOrUpdateCategoryRequestModel">
             <summary>
@@ -94,6 +427,111 @@
             Category name
             </summary>
         </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel">
+            <summary>
+            Request model to get book notes count.
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel.AuthorId">
+            <summary>
+            Unique identifier of the book's author
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel.CategoryId">
+            <summary>
+            Unique identifier of the book's category
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel.Priority">
+            <summary>
+            Book reading priority from Never to Right Now
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesCountRequestModel.Status">
+            <summary>
+            Book reading status
+            (Scheduled = 0, InProgress = 1, Completed = 2, Skipped = 3)
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel">
+            <summary>
+            Request model to get book notes
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.BookId">
+            <summary>
+            Book unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.Priority">
+            <summary>
+            Book reading priority from Never to Right Now
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.Status">
+            <summary>
+            Book reading status
+            (Scheduled = 0, InProgress = 1, Completed = 2, Skipped = 3)
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.PageSize">
+            <summary>
+            Search parameter representing the number of books on the page.
+            The default value is 10
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.PageNumber">
+            <summary>
+            Search parameter representing the page number
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.OrderBy">
+            <summary>
+            Order parameter
+            (None = 0, Title = 1, Author = 2, Category = 3, Priority = 4, Status = 5)
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBookNotesRequestModel.IsOrderDescending">
+            <summary>
+            Flag indicating whether the sorting should be in descending order.
+            It is false by default.
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel">
+            <summary>
+            Request model to get books
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel.Title">
+            <summary>
+            Search parameter representing book title
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel.AuthorId">
+            <summary>
+            Search parameter representing the unique identifier of book author 
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel.CategoryId">
+            <summary>
+            Search parameter representing the unique identifier of the book category 
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel.BookNoteId">
+            <summary>
+            Search parameter representing the book unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel.PageSize">
+            <summary>
+            Search parameter representing the number of books on the page
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Requests.GetBooksRequestModel.PageNumber">
+            <summary>
+            Search parameter representing the page number
+            </summary>
+        </member>
         <member name="T:ReadingList.WebAPI.Models.Responses.ErrorModel">
             <summary>
             Model for returning errors from api
@@ -102,6 +540,71 @@
         <member name="P:ReadingList.WebAPI.Models.Responses.ErrorModel.Message">
             <summary>
             Error message
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Responses.GetAuthorResponseModel">
+            <summary>
+            Author response model 
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetAuthorResponseModel.Id">
+            <summary>
+            Author unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetAuthorResponseModel.FullName">
+            <summary>
+            Author name
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Responses.GetBookNoteResponseModel">
+            <summary>
+            Book note response model 
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookNoteResponseModel.Id">
+            <summary>
+            Book note unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookNoteResponseModel.BookId">
+            <summary>
+            Book unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookNoteResponseModel.Priority">
+            <summary>
+            Book reading priority
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookNoteResponseModel.Status">
+            <summary>
+            Book reading status
+            </summary>
+        </member>
+        <member name="T:ReadingList.WebAPI.Models.Responses.GetBookResponseModel">
+            <summary>
+            Book response model 
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookResponseModel.Id">
+            <summary>
+            Book unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookResponseModel.Title">
+            <summary>
+            Book title
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookResponseModel.AuthorId">
+            <summary>
+            Book author unique identifier
+            </summary>
+        </member>
+        <member name="P:ReadingList.WebAPI.Models.Responses.GetBookResponseModel.CategoryId">
+            <summary>
+            Book category unique identifier
             </summary>
         </member>
         <member name="M:ReadingList.WebAPI.Program.GetPathToLogFile">
